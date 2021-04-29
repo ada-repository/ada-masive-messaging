@@ -4,7 +4,7 @@ import java.util.List;
 
 public class SendMessageRequest {
     private User user;
-    private List<Message> messages;
+    private List<NotficationMessage> messages;
 
 
 
@@ -20,11 +20,11 @@ public class SendMessageRequest {
         this.user = user;
     }
 
-    public List<Message> getMessages() {
+    public List<NotficationMessage> getMessages() {
         return this.messages;
     }
 
-    public void setMessages(List<Message> messages) {
+    public void setMessages(List<NotficationMessage> messages) {
         this.messages = messages;
     }
 

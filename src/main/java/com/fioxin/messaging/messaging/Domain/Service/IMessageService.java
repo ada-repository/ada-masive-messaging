@@ -3,15 +3,15 @@ package com.fioxin.messaging.messaging.Domain.Service;
 import java.util.Date;
 import java.util.List;
 
-import com.fioxin.messaging.messaging.Domain.Entity.Message;
+import com.fioxin.messaging.messaging.Domain.Entity.NotficationMessage;
 
 public interface IMessageService {
-    List<Message> getAllMessages();
-    Message getMessage(int id);
-    Message sendMessage(Message message, int idUser);
+    List<NotficationMessage> getAllMessages();
+    NotficationMessage getMessage(int id);
+    NotficationMessage sendMessage(List<NotficationMessage> notficationMessage, int idUser);
     void deleteMessage(int id);
-    List<Message> getMessagesByIdUser(int idUser);
-    List<Message> findByReceiverNumberAndUserId(int idUser, String receiverNumber);
-    List<Message> getMessagesByCreatedAt(int idUser, Date createdAt);
-    List<Message> getMessagesByStatus(int idUser, String status);
+    List<NotficationMessage> getMessagesByIdUser(int idUser);
+    List<NotficationMessage> findByReceiverNumberAndUserId(int idUser, String receiverNumber);
+    List<NotficationMessage> getMessagesByCreatedAt(int idUser, Date createdAt);
+    List<NotficationMessage> getMessagesByStatus(int idUser, String status);
 }

@@ -40,7 +40,7 @@ public class User {
     private boolean status;
 
     @OneToMany(mappedBy = "user")
-    private List<Message> messages;
+    private List<NotficationMessage> messages;
 
     
     public User() {
@@ -108,11 +108,11 @@ public class User {
     }
     
 
-    public List<Message> getMessages() {
+    public List<NotficationMessage> getMessages() {
         return this.messages;
     }
 
-    public void setMessages(List<Message> messages) {
+    public void setMessages(List<NotficationMessage> messages) {
         this.messages = messages;
     }
     
