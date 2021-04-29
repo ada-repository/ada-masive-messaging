@@ -52,6 +52,4 @@ public class MessageController {
     public Message sendMessage(Message message, int idUser){
         return  null;
     }
-
-
 }
