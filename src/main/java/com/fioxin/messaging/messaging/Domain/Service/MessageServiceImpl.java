@@ -74,7 +74,7 @@ public class MessageServiceImpl implements IMessageService{
         Message message = Message.creator(
             new com.twilio.type.PhoneNumber(mssg.getReceiverNumber()), //to
             new com.twilio.type.PhoneNumber("+12057076733"),      //from          
-            user.getName() + "Informa:" +  mssg.getMessage())
+            user.getName() + " Informa: " +  mssg.getMessage())
             .create();
          System.out.println(message.getSid());
         }
