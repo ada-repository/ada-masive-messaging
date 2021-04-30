@@ -7,11 +7,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import com.fioxin.messaging.messaging.Domain.Entity.User;
-import com.fioxin.messaging.messaging.Domain.Entity.NotficationMessage;
+import com.fioxin.messaging.messaging.Domain.Entity.NotificationMessage;
 import com.fioxin.messaging.messaging.Domain.Entity.SendMessageRequest;
 import com.fioxin.messaging.messaging.Domain.Service.IMessageService;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,11 +33,11 @@ public class MessageController {
     private IMessageService messageService;
 
     @GetMapping("/all")
-    public List<NotficationMessage> getAllMessages(){
+    public List<NotificationMessage> getAllMessages(){
         return messageService.getAllMessages();
     }
     @GetMapping("/{id}")
-    public NotficationMessage getMessage(@PathVariable int id){
+    public NotificationMessage getMessage(@PathVariable int id){
         return messageService.getMessage(id);
     }
     
@@ -43,20 +48,35 @@ public class MessageController {
     }
 
     @GetMapping("/{idUser}/{number}")
-    public  List<NotficationMessage> getMessagesByReceiverNumb(@PathVariable int idUser, @PathVariable String number){
+    public  List<NotificationMessage> getMessagesByReceiverNumb(@PathVariable int idUser, @PathVariable String number){
         return messageService.findByReceiverNumberAndUserId(idUser, number);
     }
 
     @GetMapping("/user/{idUser}")
-    public List<NotficationMessage> getMessagesByUserId(@PathVariable int idUser){
+    public List<NotificationMessage> getMessagesByUserId(@PathVariable int idUser){
         return messageService.getMessagesByIdUser(idUser);
     }
 
     @PostMapping("/save")
-    public NotficationMessage sendMessage(@RequestBody SendMessageRequest message){
-        List<NotficationMessage> messages = message.getMessages();
+    public SendMessageRequest sendMessage(@RequestBody SendMessageRequest message){
+        List<NotificationMessage> messages = message.getMessages();
         int idUser = message.getUser().getId();
-        messageService.sendMessage(messages, idUser);
-        return  null;
+        return messageService.sendMessage(messages, idUser);
+          
+    }
+    
+    @GetMapping("/prueba")
+    public ResponseEntity<?> prueba(){
+        Map<String, Object> response = new HashMap<>();
+        SendMessageRequest msg = new SendMessageRequest();
+        try {
+            msg = messageService.prueba();
+        } catch (DataAccessException e) {
+            response.put("Mensaje", "Error al realizar la consulta en la Base de Datos");
+            response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("Elemento", msg);
+         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 }

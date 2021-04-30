@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "messages")
-public class NotficationMessage {
+public class NotificationMessage {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
@@ -36,7 +36,7 @@ public class NotficationMessage {
     private User user;
     
 
-    public NotficationMessage() {
+    public NotificationMessage() {
     }
 
 
