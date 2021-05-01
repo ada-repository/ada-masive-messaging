@@ -24,18 +24,18 @@ public class User {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
    
-    @Column(nullable=false)  
+    @Column(nullable=false, unique=false) 
     private String name;
 
     @Column(nullable=false, unique=false)
     private String dni;
-    @Column(unique=true)
+    @Column(nullable=false, unique=false)
     private String email;
 
     @Column(nullable=false, unique=true)
     private String phone;
     
-    @Column(nullable=false, unique=true)
+    @Column(nullable=false)
     private Date createdAt;
     private boolean status;
 

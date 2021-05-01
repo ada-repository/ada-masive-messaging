@@ -15,5 +15,5 @@ public interface IMessageService {
     List<NotificationMessage> findByReceiverNumberAndUserId(int idUser, String receiverNumber);
     List<NotificationMessage> getMessagesByCreatedAt(int idUser, Date createdAt);
     List<NotificationMessage> getMessagesByStatus(int idUser, String status);
-    SendMessageRequest prueba();
+    SendMessageRequest prueba(int idUser);
 }

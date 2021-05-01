@@ -1,22 +1,13 @@
 package com.fioxin.messaging.messaging.Controller;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import com.fioxin.messaging.messaging.Domain.Entity.User;
 import com.fioxin.messaging.messaging.Domain.Entity.NotificationMessage;
 import com.fioxin.messaging.messaging.Domain.Entity.SendMessageRequest;
 import com.fioxin.messaging.messaging.Domain.Service.IMessageService;
-import java.util.HashMap;
-import java.util.Map;
+import com.fioxin.messaging.messaging.Domain.Service.IUserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +22,9 @@ public class MessageController {
     
     @Autowired
     private IMessageService messageService;
+    
+    @Autowired
+    private IUserService userService;
 
     @GetMapping("/all")
     public List<NotificationMessage> getAllMessages(){
@@ -65,18 +59,11 @@ public class MessageController {
           
     }
     
-    @GetMapping("/prueba")
-    public ResponseEntity<?> prueba(){
-        Map<String, Object> response = new HashMap<>();
-        SendMessageRequest msg = new SendMessageRequest();
-        try {
-            msg = messageService.prueba();
-        } catch (DataAccessException e) {
-            response.put("Mensaje", "Error al realizar la consulta en la Base de Datos");
-            response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
-            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        response.put("Elemento", msg);
-         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-    }
+    @GetMapping("/prueba/{id}")
+    public SendMessageRequest prueba(@PathVariable int id){
+       User user = userService.getUser(id);
+       List<NotificationMessage> messages = user.getMessages();
+       return messageService.sendMessage(messages, id);
+    }  
+    
 }

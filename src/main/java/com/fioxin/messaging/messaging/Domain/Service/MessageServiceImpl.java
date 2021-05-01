@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 public class MessageServiceImpl implements IMessageService{
 
     public static final String ACCOUNT_SID = "ACa46c31f03e3a56eb1fe96d771c4e8dcb";
-    public static final String AUTH_TOKEN = "97442378102fa72cb57185d93df944bf";
+    public static final String AUTH_TOKEN = "6183e6ed35b4e8f1b1d39e7fc3cea749";
 
     @Autowired
     private MessageJpaRepository messageRepo;
@@ -72,14 +72,15 @@ public class MessageServiceImpl implements IMessageService{
     public SendMessageRequest sendMessage(List<NotificationMessage> notficationMessage, int idUser) {      
         User user = userService.getUser(idUser);
         String finalMessage = user.getName() + " Informa: " +  notficationMessage.get(0).getMessage();
-        SendMessageRequest sendMessage = null;
-        NotificationMessage notification = null; 
+        SendMessageRequest sendMessage = new SendMessageRequest();
+        NotificationMessage notification = new NotificationMessage(); 
         List<NotificationMessage> listNoti = new ArrayList<>();
        
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);     
         sendMessage.setUser(user); //Lo retornaremos en la respuesta de la api
         for(NotificationMessage mssg : notficationMessage ){     
-        Message message = Message.creator(       
+         
+            Message message = Message.creator(                    
             new com.twilio.type.PhoneNumber(mssg.getReceiverNumber()), //to
             new com.twilio.type.PhoneNumber("+12057076733"),      //from          
            finalMessage)
@@ -91,7 +92,29 @@ public class MessageServiceImpl implements IMessageService{
          notification.setCreatedAt(Date.from(message.getDateCreated().toInstant()));
          notification.setSubject(mssg.getSubject());
          notification.setUserId(idUser);
-         listNoti.add(notification);  
+         listNoti.add(notification); 
+         System.out.println("------------------------------------------------------");
+         System.out.println("------------------------------------------------------");
+
+         System.out.println("Enviar Mensaje a:" + mssg.getReceiverNumber());
+          System.out.println("------------------------------------------------------");
+         System.out.println("SID: "+message.getSid());
+          System.out.println("------------------------------------------------------");
+         System.out.println("BODY: "+message.getBody());
+          System.out.println("------------------------------------------------------");
+         System.out.println("ERROR MESSAGE: "+message.getErrorMessage());
+          System.out.println("------------------------------------------------------");
+         System.out.println("NUM MEDIA: "+message.getNumMedia());
+          System.out.println("------------------------------------------------------");
+         System.out.println("DATE CREATED: "+message.getDateCreated());
+          System.out.println("------------------------------------------------------");
+         System.out.println("DIRECCION: "+message.getDirection());
+          System.out.println("------------------------------------------------------");
+         System.out.println("ESTATUS: "+message.getStatus());
+          System.out.println("------------------------------------------------------");
+         System.out.println("ERROR CODE: "+message.getErrorCode());
+         System.out.println("------------------------------------------------------");
+         System.out.println("------------------------------------------------------");
         }
         sendMessage.setUser(user);
         sendMessage.setMessages(listNoti);
@@ -104,10 +127,10 @@ public class MessageServiceImpl implements IMessageService{
     }
 
     @Override
-    public SendMessageRequest prueba() {
+    public SendMessageRequest prueba(int idUser) {
         SendMessageRequest objeto = new SendMessageRequest();
-        User user = userService.getUser(1);
-        List<NotificationMessage> noti = messageRepo.findAll();
+        User user = userService.getUser(idUser);
+        List<NotificationMessage> noti = messageRepo.findByUserId(idUser);
         objeto.setUser(user);
         objeto.setMessages(noti);
         return objeto;
