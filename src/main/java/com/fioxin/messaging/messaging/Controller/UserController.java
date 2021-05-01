@@ -47,7 +47,8 @@ public class UserController {
             response.put("Mensaje", "No existen registros en la Base de Datos");
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<List<User>>(userService.getAllUsers(), HttpStatus.OK);
+        response.put("Listado de Usuaruis", users);
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 
     

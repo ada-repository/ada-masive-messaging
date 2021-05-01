@@ -81,8 +81,8 @@ public class MessageServiceImpl implements IMessageService{
         for(NotificationMessage mssg : notficationMessage ){     
          
             Message message = Message.creator(                    
-            new com.twilio.type.PhoneNumber(mssg.getReceiverNumber()), //to
-            new com.twilio.type.PhoneNumber("+12057076733"),      //from          
+            new com.twilio.type.PhoneNumber("whatsapp:"+mssg.getReceiverNumber()), //to
+            new com.twilio.type.PhoneNumber("whatsapp:+12057076733"),      //from          
            finalMessage)
             .create();
          notification.setReceiverNumber(mssg.getReceiverNumber());
