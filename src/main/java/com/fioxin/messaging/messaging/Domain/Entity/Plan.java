@@ -30,7 +30,7 @@ public class Plan {
     private Integer id;
     private String name;
     private String paymentType;
-    private String term;
+    private Integer term;
     
     @OneToOne
     @JoinColumn(name = "category_id")
