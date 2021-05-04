@@ -7,7 +7,7 @@ package com.fioxin.messaging.messaging.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fioxin.messaging.messaging.Domain.Entity.User;
-import java.util.Date;
+import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,11 +33,11 @@ public class Subscription {
     @Column(name = "user_id")
     private Integer userId;
     
-    @Column(name = "category_id")
-    private Integer categoryId;
+    @Column(name = "plan_id")
+    private Integer planId;
     private Double price;
-    private Date startDate;
-    private Date endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private boolean status;
     
     @JsonIgnore
@@ -47,7 +47,7 @@ public class Subscription {
     
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "category_id", insertable = false, updatable = false)
+    @JoinColumn(name = "plan_id", insertable = false, updatable = false)
     private Plan plan;
     
 }

@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -69,9 +71,24 @@ public class SubscriptionController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);       
     
    }
-    
-   public void saveSubscription(Subscription subscription){
+   
+   @PostMapping("/save")
+   public ResponseEntity<?> saveSubscription(@RequestBody Subscription subscription){
+       Map<String, Object> response = new HashMap<>();
+       Map<String, Object> responseSave = new HashMap<>();
        
+       try {
+           responseSave = subService.saveSubscription(subscription);
+       } catch (DataAccessException e) {
+            response.put("Mensaje", "Error al guardar la subscripcion en la Base de Datos");
+            response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+       if(responseSave.containsKey("Mensaje")){
+           return new ResponseEntity<Map<String, Object>>(responseSave, HttpStatus.INTERNAL_SERVER_ERROR);
+       }  
+       return new ResponseEntity<Map<String, Object>>(responseSave, HttpStatus.CREATED);
+          
    }
     
     

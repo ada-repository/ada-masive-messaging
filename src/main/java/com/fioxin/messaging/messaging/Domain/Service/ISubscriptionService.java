@@ -7,6 +7,7 @@ package com.fioxin.messaging.messaging.domain.Service;
 
 import com.fioxin.messaging.messaging.domain.entity.Subscription;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -18,5 +19,5 @@ public interface ISubscriptionService {
     Subscription getById(int id);
     Subscription updateSubscription(Subscription actually,Subscription newSubs);
     void deleteSubscription(int id);
-    Subscription saveSubscription(Subscription subscription);
+    Map<String, Object> saveSubscription(Subscription subscription);
 }

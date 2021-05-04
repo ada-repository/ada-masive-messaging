@@ -5,10 +5,16 @@
  */
 package com.fioxin.messaging.messaging.Domain.Service.Implements;
 
+import com.fioxin.messaging.messaging.Domain.Entity.User;
+import com.fioxin.messaging.messaging.Domain.Service.IUserService;
 import com.fioxin.messaging.messaging.domain.Repository.SubscriptionJpaRepository;
+import com.fioxin.messaging.messaging.domain.Service.IPlanService;
 import com.fioxin.messaging.messaging.domain.Service.ISubscriptionService;
+import com.fioxin.messaging.messaging.domain.entity.Plan;
 import com.fioxin.messaging.messaging.domain.entity.Subscription;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +27,12 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
 
     @Autowired
     private SubscriptionJpaRepository subsRepo;
+    
+    @Autowired
+    private IUserService userService;
+    
+    @Autowired
+    private IPlanService planService;
     
     @Override
     public List<Subscription> getAll() {
@@ -45,8 +57,27 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
     }
 
     @Override
-    public Subscription saveSubscription(Subscription subscription) {
-        return subsRepo.save(subscription);
+    public Map<String, Object> saveSubscription(Subscription subscription) {
+        Map<String, Object> response = new HashMap<>();
+        User user = userService.getUser(subscription.getUserId());
+        
+        if(user == null){
+            
+            response.put("Mensaje", "Usuario no existe en la Base de datos");
+            return response;
+        }
+        Plan plan = planService.getPlanById(subscription.getPlanId());
+        if(plan == null){
+             response.put("Mensaje", "Plan no existe en la Base de datos");
+            return response;
+        }
+        int duration = subscription.getPlan().getTerm();
+        subscription.setEndDate(subscription.getStartDate().plusDays(duration));
+        subscription.setStatus(true);
+        Subscription sub = subsRepo.save(subscription);
+        response.put("Mensaje", "La subscripcion fue guardado exitosamente!");
+        response.put("Subscription", sub);
+        return  response;
     }
     
 }
