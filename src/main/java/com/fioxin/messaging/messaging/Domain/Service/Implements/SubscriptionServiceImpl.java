@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.fioxin.messaging.messaging.domain.Service;
+package com.fioxin.messaging.messaging.Domain.Service.Implements;
 
 import com.fioxin.messaging.messaging.domain.Repository.SubscriptionJpaRepository;
+import com.fioxin.messaging.messaging.domain.Service.ISubscriptionService;
 import com.fioxin.messaging.messaging.domain.entity.Subscription;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;

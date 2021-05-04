@@ -1,10 +1,11 @@
-package com.fioxin.messaging.messaging.Domain.Service;
+package com.fioxin.messaging.messaging.Domain.Service.Implements;
 
 
 import java.util.List;
 
 import com.fioxin.messaging.messaging.Domain.Entity.User;
 import com.fioxin.messaging.messaging.Domain.Repository.UserJpaRepository;
+import com.fioxin.messaging.messaging.Domain.Service.IUserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
