@@ -1,13 +1,15 @@
 package com.fioxin.messaging.messaging.Controller;
 
 import java.util.List;
-import com.fioxin.messaging.messaging.Domain.Entity.User;
 import com.fioxin.messaging.messaging.Domain.Entity.NotificationMessage;
 import com.fioxin.messaging.messaging.Domain.Entity.SendMessageRequest;
 import com.fioxin.messaging.messaging.Domain.Service.IMessageService;
-import com.fioxin.messaging.messaging.Domain.Service.IUserService;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,8 +25,7 @@ public class MessageController {
     @Autowired
     private IMessageService messageService;
     
-    @Autowired
-    private IUserService userService;
+   
 
     @GetMapping("/all")
     public List<NotificationMessage> getAllMessages(){
@@ -52,18 +53,10 @@ public class MessageController {
     }
 
     @PostMapping("/save")
-    public SendMessageRequest sendMessage(@RequestBody SendMessageRequest message){
-        List<NotificationMessage> messages = message.getMessages();
-        int idUser = message.getUser().getId();
-        return messageService.sendMessage(messages, idUser);
+    public ResponseEntity<?> sendMessage(@RequestBody SendMessageRequest message){       
+         Map<String, Object> response = new HashMap<>(); 
+        response = messageService.sendMessage(message);
+        return new ResponseEntity<Map<String, Object>>(response,HttpStatus.CREATED);
           
-    }
-    
-    @GetMapping("/prueba/{id}")
-    public SendMessageRequest prueba(@PathVariable int id){
-       User user = userService.getUser(id);
-       List<NotificationMessage> messages = user.getMessages();
-       return messageService.sendMessage(messages, id);
-    }  
-    
+    }    
 }
