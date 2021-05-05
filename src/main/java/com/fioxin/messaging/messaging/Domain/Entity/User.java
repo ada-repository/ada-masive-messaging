@@ -1,5 +1,6 @@
 package com.fioxin.messaging.messaging.Domain.Entity;
 
+import com.fioxin.messaging.messaging.domain.entity.Subscription;
 import java.util.Date;
 import java.util.List;
 
@@ -42,8 +43,18 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<NotificationMessage> messages;
 
+    @OneToMany(mappedBy = "user")
+    private List<Subscription> subscription;
     
     public User() {
+    }
+
+    public List<Subscription> getSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(List<Subscription> subscription) {
+        this.subscription = subscription;
     }
 
 

@@ -4,3 +4,5 @@ insert into messages values (4,'1-5-2021','Fiorela Te amo','Fiorela','+584264881
 
 
 insert into plans values (1,'BASICO','ELLOS','30',1)
+
+INSERT INTO SUBSCRIPTIONs VALUES (1,'30/5/2021',1,1500,'1/5/2021',true,1)

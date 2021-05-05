@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -73,7 +74,7 @@ public class SubscriptionController {
    }
    
    @PostMapping("/save")
-   public ResponseEntity<?> saveSubscription(@RequestBody Subscription subscription){
+   public ResponseEntity<?> saveSubscription(@RequestBody Subscription subscription){      
        Map<String, Object> response = new HashMap<>();
        Map<String, Object> responseSave = new HashMap<>();
        
@@ -91,6 +92,27 @@ public class SubscriptionController {
           
    }
     
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateSubscription(@RequestBody Subscription newSubs,@PathVariable int id){
+        Subscription actually = subService.getById(id);
+        Subscription updated = null;
+        Map<String, Object> response = new HashMap<>();
+        if(actually == null){
+          response.put("Error", " No se pudo editar ,la susbcricion con ID: " + id + ". No existe en la Base de Datos");
+          return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+       }
+        try {
+            updated = subService.updateSubscription(actually, newSubs);
+        } catch (DataAccessException e) {
+            response.put("Mensaje", "Error al actualizar la subscripcion en la Base de Datos");
+            response.put("Error", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);        
+         }
+        response.put("Mensaje", "La subscripcion fue actualizada exitosamente!");
+        response.put("Subscripcion", updated);
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
+    }
+   
     
 }
 
@@ -98,7 +120,6 @@ public class SubscriptionController {
 /*
 
  
-    Subscription updateSubscription(Subscription actually,Subscription newSubs);
     void deleteSubscription(int id); Condiciones para que se vuelva false el estatus
    
 */

@@ -58,20 +58,22 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
 
     @Override
     public Map<String, Object> saveSubscription(Subscription subscription) {
-        Map<String, Object> response = new HashMap<>();
-        User user = userService.getUser(subscription.getUserId());
         
+        Map<String, Object> response = new HashMap<>();
+        User user = userService.getUser(subscription.getUserId());      
         if(user == null){
             
             response.put("Mensaje", "Usuario no existe en la Base de datos");
             return response;
         }
         Plan plan = planService.getPlanById(subscription.getPlanId());
+        
         if(plan == null){
              response.put("Mensaje", "Plan no existe en la Base de datos");
             return response;
         }
-        int duration = subscription.getPlan().getTerm();
+        
+        int duration = plan.getTerm(); 
         subscription.setEndDate(subscription.getStartDate().plusDays(duration));
         subscription.setStatus(true);
         Subscription sub = subsRepo.save(subscription);
