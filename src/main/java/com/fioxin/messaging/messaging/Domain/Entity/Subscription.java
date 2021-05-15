@@ -38,7 +38,7 @@ public class Subscription {
     private Double price;
     private LocalDate startDate;
     private LocalDate endDate;
-    private boolean status;
+    private Boolean status;
     
     @JsonIgnore
     @ManyToOne
@@ -49,5 +49,7 @@ public class Subscription {
     @ManyToOne
     @JoinColumn(name = "plan_id", insertable = false, updatable = false)
     private Plan plan;
+    
+    
     
 }

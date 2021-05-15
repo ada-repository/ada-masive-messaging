@@ -9,12 +9,13 @@ import com.fioxin.messaging.messaging.Domain.Entity.User;
 import com.fioxin.messaging.messaging.Domain.Repository.MessageJpaRepository;
 import com.fioxin.messaging.messaging.Domain.Service.IMessageService;
 import com.fioxin.messaging.messaging.Domain.Service.IUserService;
+import com.fioxin.messaging.messaging.domain.entity.Subscription;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import org.springframework.stereotype.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,12 +77,28 @@ public class MessageServiceImpl implements IMessageService{
     public Map<String, Object> sendMessage(SendMessageRequest messages) {      
         Map<String, Object> response = new HashMap<>();      
         User user = userService.getUser(messages.getIdUser());
+        String finalMessage = messages.getMessage();
         if(user == null){
             response.put("Mensaje", "Usuario no existe en la Base de datos");
             return response;
         }
-        //VALIDAR QUE LA SUBSCRIPCION DEL USUARIO ESTE ACTIVA ¿Como? ¿Cambiar la relacion?
-     String finalMessage = messages.getMessage(); //El usuario deberia personalizar su mensaje, no nosotros xD
+        //Buscamos la subscripcion del usuario que este activa. 
+      Subscription subscrip =  user.getSubscription().
+                stream().
+                filter(subs -> subs.getStatus().equals("Activo")).findFirst().orElse(null);
+      
+      //Validamos que la fecha de la subscripcion este activa
+       if (!(LocalDate.parse(subscrip.getEndDate().toString()).isBefore(LocalDate.parse(LocalDate.now().toString())))){
+          response.put("Mensaje", "Subscripcion expirada. Por favor Renuevela");
+            return response;
+       }
+       
+       //Validamos el tamaño del mensaje
+    if( finalMessage.length() > 160){
+          response.put("Mensaje", "El tamaño del mensaje excede los 160 caracteres.");
+            return response;
+    }
+    
         SendMessageRequest sendMessage = new SendMessageRequest();
         NotificationMessage notification = new NotificationMessage(); 
         List<NotificationMessage> listNoti = new ArrayList<>();     
