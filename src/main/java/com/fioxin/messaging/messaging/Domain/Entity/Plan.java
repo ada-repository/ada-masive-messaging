@@ -6,6 +6,7 @@
 package com.fioxin.messaging.messaging.domain.entity;
 
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,9 +32,12 @@ public class Plan {
     private String name;
     private String paymentType;
     private Integer term;
+    @Column(name = "category_id")
+    private Integer categoryId;
+    private boolean status;
     
     @OneToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", insertable = false, updatable = false)
     private Category category;
     
     @OneToMany(mappedBy = "plan")

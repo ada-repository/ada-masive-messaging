@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package com.fioxin.messaging.messaging.Domain.Service.Implements;
-
 import com.fioxin.messaging.messaging.domain.Repository.PlanJpaRepository;
 import com.fioxin.messaging.messaging.domain.Service.IPlanService;
 import com.fioxin.messaging.messaging.domain.entity.Plan;
@@ -34,7 +33,9 @@ public class PlanServiceImpl implements IPlanService{
 
     @Override
     public void deletePlan(int id) {
-        planRepo.deleteById(id);
+        Plan plan = planRepo.findById(id).get();
+        plan.setStatus(false);
+        planRepo.save(plan); 
     }
 
     @Override

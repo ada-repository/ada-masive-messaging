@@ -13,6 +13,7 @@ import com.fioxin.messaging.messaging.domain.Service.IPlanService;
 import com.fioxin.messaging.messaging.domain.entity.Subscription;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.rest.studio.v2.flow.Execution;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -87,7 +88,8 @@ public class MessageServiceImpl implements IMessageService{
             response.put("Mensaje", "Usuario no existe en la Base de datos");
             return response;
         }
-        //Validamos la Subscripcion del usuariom (que sea sms, este activa y este dentro de la fecha)
+        
+     //Validamos la Subscripcion del usuario (que sea sms, este activa y este dentro de la fecha)
     boolean rpta = user.getSubscription().stream()
             .anyMatch( s -> isSMS(s));           
       
@@ -100,16 +102,10 @@ public class MessageServiceImpl implements IMessageService{
     if( finalMessage.length() > 160){
           response.put("Mensaje", "El tamaño del mensaje excede los 160 caracteres.");
             return response;
-    }
-    
-        SendMessageRequest sendMessage = new SendMessageRequest();
-        
+    }  
+        SendMessageRequest sendMessage = new SendMessageRequest();       
         List<NotificationMessage> listNoti = new LinkedList<>();     
-        //Comenzamos a enviar los mensajes YUPIII!!
-        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);     
-    //    sendMessage.setUser(user); //Lo retornaremos en la respuesta de la api
-    
-    
+        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);   
        messages.getMessages().forEach( (sms) -> {
                Message message = Message.creator(                    
                new com.twilio.type.PhoneNumber(sms.getReceiverNumber()), //to
@@ -124,10 +120,12 @@ public class MessageServiceImpl implements IMessageService{
                notification.setCreatedAt(Date.from(message.getDateCreated().toInstant()));
                notification.setSubject(sms.getSubject());
                notification.setUserId(user.getId());  
-               listNoti.add(notification); 
-             }                         
-       );
-       
+               listNoti.add(notification);              
+             } 
+              
+       );    
+        for(Execution.Status c: Execution.Status.values())
+             System.out.println("Status:"+c);
       sendMessage.setIdUser(user.getId());
       sendMessage.setMessage(finalMessage);            
       sendMessage.setMessages(listNoti);

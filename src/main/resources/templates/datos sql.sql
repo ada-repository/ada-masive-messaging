@@ -4,9 +4,9 @@ insert into categories values (1,'SMS',true)
 insert into categories values (2,'EMAIL',true)
 insert into categories values (3,'WHATSAPP',true)
 
-insert into plans values (1,'BASICO','ELLOS','30',1)
-insert into plans values (2,'PREMIUM','NOSOTROS','60',1)
-insert into plans values (3,'EXPERT','NOSOTROS','90',1)
+insert into plans values (1,'BASICO','ELLOS','30',1,true)
+insert into plans values (2,'PREMIUM','NOSOTROS','60',1,true)
+insert into plans values (3,'EXPERT','NOSOTROS','90',1,false)
 
 insert into users values (1,'2021/5/15','V-24160257','XIANGNRODRIGUEZ@GMAIL.COM','XIANGN','584264082790',true)
 insert into users values (2,'2021/4/15','V-21124537','FIORELA@GMAIL.COM','FIORELA','584122701229',true)

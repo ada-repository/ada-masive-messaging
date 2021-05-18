@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
-@RequestMapping("/Plans")
+@RequestMapping("/plans")
 public class PlanController {
     
     @Autowired
@@ -69,7 +69,7 @@ public class PlanController {
             response.put("Mensaje", "El plan con el ID: " + id + " no existe en la Base de Datos");
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
         }
-        response.put("Categoria", plan);
+        response.put("Plan", plan);
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);       
      }   
     
