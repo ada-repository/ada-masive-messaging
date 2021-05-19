@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 public class MessageServiceImpl implements IMessageService{
 
     public static final String ACCOUNT_SID = "ACa46c31f03e3a56eb1fe96d771c4e8dcb";
-    public static final String AUTH_TOKEN = "972dabfef8df7547468d442505c5bf0a";
+    public static final String AUTH_TOKEN = "74f19d6f304b72e3738cfb1e518c51d6";
 
     @Autowired
     private MessageJpaRepository messageRepo;
@@ -98,31 +98,30 @@ public class MessageServiceImpl implements IMessageService{
             return response;
     }
    
-       //Validamos el tamaño del mensaje
-    if( finalMessage.length() > 160){
-          response.put("Mensaje", "El tamaño del mensaje excede los 160 caracteres.");
-            return response;
-    }  
+    
         SendMessageRequest sendMessage = new SendMessageRequest();       
         List<NotificationMessage> listNoti = new LinkedList<>();     
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);   
        messages.getMessages().forEach( (sms) -> {
-               Message message = Message.creator(                    
-               new com.twilio.type.PhoneNumber(sms.getReceiverNumber()), //to
-               new com.twilio.type.PhoneNumber("+12057076733"),      //from          
-               finalMessage)
-               .create();
-              NotificationMessage notification = new NotificationMessage();           
-               notification.setReceiverNumber(sms.getReceiverNumber());
-               notification.setMessage(finalMessage);
-               notification.setStatus(message.getStatus().toString());
-               notification.setNameReceiver(sms.getNameReceiver());
-               notification.setCreatedAt(Date.from(message.getDateCreated().toInstant()));
-               notification.setSubject(sms.getSubject());
-               notification.setUserId(user.getId());  
-               listNoti.add(notification);              
-             } 
-              
+           
+             String[] numbers = sms.getReceiverNumber().split(",");
+                for(String number : numbers ){
+                    Message message = Message.creator(                    
+                    new com.twilio.type.PhoneNumber(number), //to
+                    new com.twilio.type.PhoneNumber("+12057076733"),      //from          
+                    finalMessage)
+                    .create();
+                   NotificationMessage notification = new NotificationMessage();           
+                    notification.setReceiverNumber(number);
+                    notification.setMessage(finalMessage);
+                    notification.setStatus(message.getStatus().toString());
+                    notification.setNameReceiver(sms.getNameReceiver());
+                    notification.setCreatedAt(Date.from(message.getDateCreated().toInstant()));
+                    notification.setSubject(sms.getSubject());
+                    notification.setUserId(user.getId());  
+                    listNoti.add(notification);    
+                }                   
+          }           
        );    
         for(Execution.Status c: Execution.Status.values())
              System.out.println("Status:"+c);

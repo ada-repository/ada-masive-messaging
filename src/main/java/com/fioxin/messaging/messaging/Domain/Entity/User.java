@@ -12,9 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-
-
-
 /**
  * User
  */
@@ -38,6 +35,7 @@ public class User {
     
     @Column(nullable=false)
     private Date createdAt;
+    private boolean sendBalance;
     private boolean status;
 
     @OneToMany(mappedBy = "user")
