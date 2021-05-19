@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ import org.springframework.stereotype.Service;
 public class MessageServiceImpl implements IMessageService{
 
     public static final String ACCOUNT_SID = "ACa46c31f03e3a56eb1fe96d771c4e8dcb";
-    public static final String AUTH_TOKEN = "74f19d6f304b72e3738cfb1e518c51d6";
+    public static final String AUTH_TOKEN = "5af6c4fc6153347aac58d50f2d8d232b";
 
     @Autowired
     private MessageJpaRepository messageRepo;
@@ -97,14 +98,25 @@ public class MessageServiceImpl implements IMessageService{
             response.put("Mensaje", "El usuario no tiene subscripcion desponible para esta opcion ");
             return response;
     }
-   
-    
+
         SendMessageRequest sendMessage = new SendMessageRequest();       
         List<NotificationMessage> listNoti = new LinkedList<>();     
-        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);   
+        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);  
+        
+       List<NotificationMessage> empty =  messages.getMessages()
+               .stream()
+               .filter( sms -> isEmptyNumber(sms)).collect(Collectors.toList());
+        
+       if(empty.size() >0){
+           empty.forEach( list -> {
+                response.put("Mensaje", "El destinatario :"+list.getNameReceiver()+" no tiene numero telefonico para enviar el mensaje");
+           });    
+            return response;
+       }
        messages.getMessages().forEach( (sms) -> {
            
              String[] numbers = sms.getReceiverNumber().split(",");
+             if(numbers.length > 0){          
                 for(String number : numbers ){
                     Message message = Message.creator(                    
                     new com.twilio.type.PhoneNumber(number), //to
@@ -120,7 +132,11 @@ public class MessageServiceImpl implements IMessageService{
                     notification.setSubject(sms.getSubject());
                     notification.setUserId(user.getId());  
                     listNoti.add(notification);    
-                }                   
+                  } 
+                 }else{
+                  response.put("Mensaje", "Nawara que imbecil eres. Te informo que el usuario "
+                          + "con id: "+sms.getNameReceiver()+" no tiene numero asociado y no le podre enviar un carajo.");                
+             }
           }           
        );    
         for(Execution.Status c: Execution.Status.values())
@@ -139,6 +155,10 @@ public class MessageServiceImpl implements IMessageService{
         return "SMS".equals(s.getPlan().getCategory().getName()) && s.getStatus() == true && !(LocalDate.parse(s.getEndDate().toString()).isBefore(LocalDate.parse(LocalDate.now().toString()))) ;
        
     }
+    
+    private boolean isEmptyNumber(NotificationMessage sms){
+        return "".equals(sms.getReceiverNumber());
+}
 }
 /*  System.out.println("SID: "+message.getSid());
          System.out.println("BODY: "+message.getBody());
