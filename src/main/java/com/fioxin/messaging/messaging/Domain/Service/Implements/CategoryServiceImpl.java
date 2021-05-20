@@ -7,7 +7,9 @@ package com.fioxin.messaging.messaging.Domain.Service.Implements;
 
 import com.fioxin.messaging.messaging.domain.Repository.CategoryJpaRepository;
 import com.fioxin.messaging.messaging.domain.Service.ICategoryService;
+import com.fioxin.messaging.messaging.domain.Service.ISubscriptionService;
 import com.fioxin.messaging.messaging.domain.entity.Category;
+import com.fioxin.messaging.messaging.domain.entity.Subscription;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,9 @@ public class CategoryServiceImpl implements ICategoryService {
     @Autowired
     private CategoryJpaRepository cateRepo;
     
+    @Autowired
+    private ISubscriptionService subService;
+    
     @Override
     public List<Category> getAll() {
         return cateRepo.findAll();
@@ -33,8 +38,17 @@ public class CategoryServiceImpl implements ICategoryService {
     }
 
     @Override
-    public void deleteCategory(int id) {
-        cateRepo.deleteById(id);
+    public boolean deleteCategory(int id) {
+       List<Subscription> listSubs = subService.getAll();
+       boolean rpta = listSubs.stream().anyMatch(  s -> catActiveInSubs(s, id) );
+       if(!rpta){
+              Category cate = cateRepo.findById(id).get();
+              cate.setStatus(false);
+              cateRepo.save(cate);
+              return true;
+       }  else
+           return false;
+       
     }
 
     @Override
@@ -47,6 +61,11 @@ public class CategoryServiceImpl implements ICategoryService {
     @Override
     public Category saveCategory(Category category) {
         return cateRepo.save(category);
+    }
+    
+    
+    private boolean catActiveInSubs(Subscription subs, int id){
+       return  subs.getStatus() == true && subs.getPlan().getCategory().getId() == id; 
     }
     
 }

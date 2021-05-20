@@ -15,6 +15,7 @@ import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.rest.studio.v2.flow.Execution;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -108,22 +109,23 @@ public class MessageServiceImpl implements IMessageService{
                .filter( sms -> isEmptyNumber(sms)).collect(Collectors.toList());
         
        if(empty.size() >0){
+           List<String> vac = new ArrayList<>();
            empty.forEach( list -> {
-                response.put("Mensaje", "El destinatario :"+list.getNameReceiver()+" no tiene numero telefonico para enviar el mensaje");
-           });    
+               vac.add(list.getNameReceiver());
+           });
+            response.put("Estos usuarios no tienen numero de telefono asociados", vac);
             return response;
        }
        messages.getMessages().forEach( (sms) -> {
            
-             String[] numbers = sms.getReceiverNumber().split(",");
-             if(numbers.length > 0){          
+             String[] numbers = sms.getReceiverNumber().split(",");   
                 for(String number : numbers ){
                     Message message = Message.creator(                    
                     new com.twilio.type.PhoneNumber(number), //to
                     new com.twilio.type.PhoneNumber("+12057076733"),      //from          
                     finalMessage)
                     .create();
-                   NotificationMessage notification = new NotificationMessage();           
+                    NotificationMessage notification = new NotificationMessage();           
                     notification.setReceiverNumber(number);
                     notification.setMessage(finalMessage);
                     notification.setStatus(message.getStatus().toString());
@@ -131,22 +133,16 @@ public class MessageServiceImpl implements IMessageService{
                     notification.setCreatedAt(Date.from(message.getDateCreated().toInstant()));
                     notification.setSubject(sms.getSubject());
                     notification.setUserId(user.getId());  
-                    listNoti.add(notification);    
-                  } 
-                 }else{
-                  response.put("Mensaje", "Nawara que imbecil eres. Te informo que el usuario "
-                          + "con id: "+sms.getNameReceiver()+" no tiene numero asociado y no le podre enviar un carajo.");                
-             }
+                    listNoti.add(notification);  
+                  }                
           }           
        );    
-        for(Execution.Status c: Execution.Status.values())
-             System.out.println("Status:"+c);
       sendMessage.setIdUser(user.getId());
       sendMessage.setMessage(finalMessage);            
       sendMessage.setMessages(listNoti);
       messageRepo.saveAll(listNoti);
-      response.put("Mensajes", "Mensajes Enviados: "+listNoti.size());
       response.put("Mensajes", sendMessage);
+      response.put("Mensajes", "Mensajes Enviados: "+listNoti.size());   
       return response;
     }
     

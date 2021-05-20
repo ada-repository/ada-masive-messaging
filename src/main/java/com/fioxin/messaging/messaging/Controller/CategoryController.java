@@ -43,14 +43,14 @@ public class CategoryController {
         } catch (DataAccessException e) {
             response.put("Mensaje", "Error al realizar la consulta en la Base de Datos");
             response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
-            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if(cat.size() == 0){
             response.put("Mensaje", "No existen registros en la Base de Datos");
-            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
         response.put("Categorias", cat);
-        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
     @GetMapping("/{id}")
@@ -62,28 +62,34 @@ public class CategoryController {
         } catch (DataAccessException e) {
             response.put("Mensaje", "Error al realizar la consulta en la Base de Datos");
             response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
-            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if(cat == null){
             response.put("Mensaje", "La categoria con el ID: " + id + " no existe en la Base de Datos");
-            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
         response.put("Categoria", cat);
-        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);       
+        return new ResponseEntity<>(response, HttpStatus.OK);       
     }
     
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCategory(@PathVariable int id){
          Map<String, Object> response = new HashMap<>();
+          boolean rpta;
          try {
-            cateService.deleteCategory(id);
+           rpta =  cateService.deleteCategory(id);
         } catch (DataAccessException e) {
             response.put("Mensaje", "Error al eliminar el registro en la Base de Datos");
             response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
-            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+       
+         if(!rpta){
+              response.put("Mensaje", "La categoria esta asignada a una subscripcion vigente.");
+               return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+         }
         response.put("Mensaje","Categoria eliminada exitosamente!");
-        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
     @PostMapping("/save")
@@ -95,11 +101,11 @@ public class CategoryController {
         } catch (DataAccessException e) {
             response.put("Mensaje", "Error al guardar la categoria en la Base de Datos");
             response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
-            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         response.put("Mensaje:", "Registro Guardado exitosamente.!");
         response.put("Categoria", categorySaved);
-        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
     
     @PutMapping("/{id}")
@@ -109,19 +115,17 @@ public class CategoryController {
         Category catUpdated = null;
         if( catActually == null){
             response.put("Mensaje", "La categoria con el ID: " + id + " no existe en la Base de Datos");
-            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
         try {
             catUpdated = cateService.updateCategory(catActually, category);
         } catch (DataAccessException e) {
             response.put("Mensaje", "Error al actualizar la categoria en la Base de Datos");
             response.put("Error", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
-            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);        
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);        
         }
         response.put("Mensaje", "La categoria fue actualizada exitosamente!");
         response.put("Categoria", catUpdated);
-        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
-    }
-    
-    
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }   
 }

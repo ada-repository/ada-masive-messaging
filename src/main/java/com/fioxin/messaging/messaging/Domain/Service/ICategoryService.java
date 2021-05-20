@@ -17,7 +17,7 @@ public interface ICategoryService {
     
     List<Category> getAll();
     Category getCategoryById(int id);
-    void deleteCategory(int id);
+    boolean deleteCategory(int id);
     Category updateCategory(Category actually,Category newCategory);
     Category saveCategory(Category category);
     

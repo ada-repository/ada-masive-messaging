@@ -5,6 +5,7 @@
  */
 package com.fioxin.messaging.messaging.domain.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,6 +25,7 @@ public class Category {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
+    @Column(nullable=false, unique=false)
     private String name;
     private boolean status;
     
