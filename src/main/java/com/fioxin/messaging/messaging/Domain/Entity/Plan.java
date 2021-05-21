@@ -29,7 +29,9 @@ public class Plan {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
+    @Column(nullable=false, unique=false)
     private String name;
+    @Column(nullable=false)
     private String paymentType;
     private Integer term;
     @Column(name = "category_id")
@@ -39,6 +41,7 @@ public class Plan {
     @OneToOne
     @JoinColumn(name = "category_id", insertable = false, updatable = false)
     private Category category;
+    
     
     @OneToMany(mappedBy = "plan")
     private List<Subscription> subscription;

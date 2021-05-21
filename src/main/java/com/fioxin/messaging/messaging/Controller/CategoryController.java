@@ -85,7 +85,7 @@ public class CategoryController {
         }
        
          if(!rpta){
-              response.put("Mensaje", "La categoria esta asignada a una subscripcion vigente.");
+              response.put("Mensaje", "La categoria que quiere eliminar esta asignada a una subscripcion vigente.");
                return new ResponseEntity<>(response, HttpStatus.CONFLICT);
          }
         response.put("Mensaje","Categoria eliminada exitosamente!");

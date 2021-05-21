@@ -76,13 +76,18 @@ public class PlanController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePlan(@PathVariable int id){
           Map<String, Object> response = new HashMap<>();
+          boolean rpta;
          try {
-            planService.deletePlan(id);
+            rpta = planService.deletePlan(id);
         } catch (DataAccessException e) {
             response.put("Mensaje", "Error al eliminar el registro en la Base de Datos");
             response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+         if(!rpta){
+             response.put("Mensaje", "El plan que quiere eliminar esta asignado a una subscripcion vigente.");
+               return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+         }
         response.put("Mensaje","Plan eliminada exitosamente!");
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
   
@@ -113,6 +118,7 @@ public class PlanController {
     public ResponseEntity<?> savePlan(@RequestBody Plan plan){
        Map<String, Object> response = new HashMap<>();
        Plan planSaved = null;
+       
         try {
             planSaved = planService.savePlan(plan);
         }  catch (DataAccessException e) {

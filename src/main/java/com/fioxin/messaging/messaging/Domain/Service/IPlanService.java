@@ -16,7 +16,7 @@ public interface IPlanService {
     
     List<Plan> getAllPlans();
     Plan getPlanById(int id);
-    void deletePlan(int id);
+    boolean deletePlan(int id);
     Plan updatePlan(Plan actually, Plan newPlan);
     Plan savePlan(Plan plan);
 }

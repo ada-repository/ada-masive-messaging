@@ -6,7 +6,9 @@
 package com.fioxin.messaging.messaging.Domain.Service.Implements;
 import com.fioxin.messaging.messaging.domain.Repository.PlanJpaRepository;
 import com.fioxin.messaging.messaging.domain.Service.IPlanService;
+import com.fioxin.messaging.messaging.domain.Service.ISubscriptionService;
 import com.fioxin.messaging.messaging.domain.entity.Plan;
+import com.fioxin.messaging.messaging.domain.entity.Subscription;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,9 @@ public class PlanServiceImpl implements IPlanService{
     @Autowired
     private PlanJpaRepository planRepo;
     
+     @Autowired
+    private ISubscriptionService subService;
+    
     @Override
     public List<Plan> getAllPlans() {
         return planRepo.findAll();
@@ -31,18 +36,26 @@ public class PlanServiceImpl implements IPlanService{
         return planRepo.findById(id).orElse(null);
     }
 
+    
+    //En revision de la validacion de la subscripcion. Por estatus o por fecha?
     @Override
-    public void deletePlan(int id) {
-        Plan plan = planRepo.findById(id).get();
-        plan.setStatus(false);
-        planRepo.save(plan); 
+    public boolean deletePlan(int id) {
+         List<Subscription> listSubs = subService.getAll();
+        boolean rpta = listSubs.stream().anyMatch(  s -> planActiveInSub(s,id));
+        if(!rpta){
+            Plan plan = planRepo.findById(id).get();
+            plan.setStatus(false);
+            planRepo.save(plan);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public Plan updatePlan(Plan actually, Plan newPlan) {
         actually.setName(newPlan.getName());
         actually.setPaymentType(newPlan.getPaymentType());
-        actually.setCategory(newPlan.getCategory());
+        actually.setCategoryId(newPlan.getCategoryId());
         actually.setTerm(newPlan.getTerm());
         return planRepo.save(actually);
     }
@@ -50,6 +63,10 @@ public class PlanServiceImpl implements IPlanService{
     @Override
     public Plan savePlan(Plan plan) {
         return planRepo.save(plan);
+    }
+    
+    private boolean planActiveInSub(Subscription subs, int id){
+        return subs.getStatus() == true && subs.getPlanId() == id;
     }
     
 }
