@@ -35,7 +35,9 @@ public class User {
     
     @Column(nullable=false)
     private Date createdAt;
+    @Column(nullable=false)
     private boolean sendBalance;
+    @Column(nullable=false)
     private boolean status;
 
     @OneToMany(mappedBy = "user")

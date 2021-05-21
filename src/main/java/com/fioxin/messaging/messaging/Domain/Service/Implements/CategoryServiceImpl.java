@@ -65,7 +65,7 @@ public class CategoryServiceImpl implements ICategoryService {
     
     
     private boolean catActiveInSubs(Subscription subs, int id){
-       return  subs.getStatus() == true && subs.getPlan().getCategory().getId() == id; 
+       return  subs.isStatus() == true && subs.getPlan().getCategory().getId() == id; 
     }
     
 }

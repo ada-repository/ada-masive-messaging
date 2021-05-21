@@ -30,15 +30,20 @@ public class Subscription {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
-    @Column(name = "user_id")
+    
+    @Column(name = "user_id",nullable = false)
     private Integer userId;
     
-    @Column(name = "plan_id")
+    @Column(name = "plan_id",nullable = false)
     private Integer planId;
+    @Column(nullable=false)
     private Double price;
+    @Column(nullable=false)
     private LocalDate startDate;
+    @Column(nullable=false)
     private LocalDate endDate;
-    private Boolean status;
+    @Column(nullable=false)
+    private boolean status;
     
     @JsonIgnore
     @ManyToOne

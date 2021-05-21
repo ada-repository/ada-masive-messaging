@@ -66,7 +66,7 @@ public class PlanServiceImpl implements IPlanService{
     }
     
     private boolean planActiveInSub(Subscription subs, int id){
-        return subs.getStatus() == true && subs.getPlanId() == id;
+        return subs.isStatus() == true && subs.getPlanId() == id;
     }
     
 }
