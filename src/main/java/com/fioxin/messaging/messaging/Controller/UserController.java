@@ -43,7 +43,7 @@ public class UserController {
             response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        if(users.size() == 0) {
+        if(users.isEmpty()) {
             response.put("Mensaje", "No existen registros en la Base de Datos");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }

@@ -148,7 +148,7 @@ public class MessageServiceImpl implements IMessageService{
     
     
     private boolean isSMS(Subscription s){
-        return "SMS".equals(s.getPlan().getCategory().getName()) && s.isStatus() == true && !(LocalDate.parse(s.getEndDate().toString()).isBefore(LocalDate.parse(LocalDate.now().toString()))) ;
+        return "SMS".equals(s.getPlan().getCategory().getName()) && s.isStatus() == true && !( s.getEndDate().isBefore(LocalDate.now())) ;
        
     }
     

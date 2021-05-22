@@ -9,6 +9,7 @@ import com.fioxin.messaging.messaging.domain.Service.IPlanService;
 import com.fioxin.messaging.messaging.domain.Service.ISubscriptionService;
 import com.fioxin.messaging.messaging.domain.entity.Plan;
 import com.fioxin.messaging.messaging.domain.entity.Subscription;
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,7 @@ public class PlanServiceImpl implements IPlanService{
     //En revision de la validacion de la subscripcion. Por estatus o por fecha?
     @Override
     public boolean deletePlan(int id) {
+        //Podria buscar las subscripciones por idPlan
          List<Subscription> listSubs = subService.getAll();
         boolean rpta = listSubs.stream().anyMatch(  s -> planActiveInSub(s,id));
         if(!rpta){
@@ -66,7 +68,7 @@ public class PlanServiceImpl implements IPlanService{
     }
     
     private boolean planActiveInSub(Subscription subs, int id){
-        return subs.isStatus() == true && subs.getPlanId() == id;
+        return subs.getPlanId() == id && subs.isStatus() == true && !( subs.getEndDate().isBefore(LocalDate.now()));
     }
     
 }

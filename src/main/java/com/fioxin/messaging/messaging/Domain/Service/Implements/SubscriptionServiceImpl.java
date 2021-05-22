@@ -12,6 +12,7 @@ import com.fioxin.messaging.messaging.domain.Service.IPlanService;
 import com.fioxin.messaging.messaging.domain.Service.ISubscriptionService;
 import com.fioxin.messaging.messaging.domain.entity.Plan;
 import com.fioxin.messaging.messaging.domain.entity.Subscription;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,8 +53,15 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
     }
 
     @Override
-    public void deleteSubscription(int id) {
-        subsRepo.deleteById(id);
+    public boolean deleteSubscription(int id) {
+        Subscription subs = getById(id);
+        if(subs!= null){
+            subs.setStatus(false);
+            saveSubscription(subs);
+            return true;
+        }else
+            return false;
+        
     }
 
     @Override
@@ -73,13 +81,25 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
             return response;
         }
         
+        List<Subscription> subs = subsRepo.findByPlanIdAndUserId(subscription.getPlanId(), subscription.getUserId());
+        if(!subs.isEmpty()){
+            boolean rpta = subs.stream().anyMatch(s -> planActiveInSubs(s));
+            if(rpta){
+                response.put("Mensaje", "El usuario ya cuenta con una subscripcion con este plan. Seleccione otro plan");
+                return response;
+            }
+        }
+        
         int duration = plan.getTerm(); 
         subscription.setEndDate(subscription.getStartDate().plusDays(duration));
         subscription.setStatus(true);
         Subscription sub = subsRepo.save(subscription);
-        response.put("Mensaje", "La subscripcion fue guardado exitosamente!");
         response.put("Subscription", sub);
         return  response;
+    }
+    
+    private boolean planActiveInSubs(Subscription subs){
+        return subs.isStatus() == true && !( subs.getEndDate().isBefore(LocalDate.now()));
     }
     
 }

@@ -18,6 +18,6 @@ public interface ISubscriptionService {
     List<Subscription> getAll();
     Subscription getById(int id);
     Subscription updateSubscription(Subscription actually,Subscription newSubs);
-    void deleteSubscription(int id);
+    boolean deleteSubscription(int id);
     Map<String, Object> saveSubscription(Subscription subscription);
 }

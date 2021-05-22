@@ -43,14 +43,14 @@ public class SubscriptionController {
        } catch (DataAccessException e) {
             response.put("Mensaje", "Error al realizar la consulta en la Base de Datos");
             response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
-            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        if(subs.size() == 0){
+        if(subs.isEmpty()){
              response.put("Mensaje", "No existen registros en la Base de Datos");
-             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);       
+             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);       
         }
         response.put("Subscriptions", subs);
-        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);       
+        return new ResponseEntity<>(response, HttpStatus.OK);       
    }
     
    @GetMapping("/{id}")
@@ -62,14 +62,14 @@ public class SubscriptionController {
        } catch (DataAccessException e) {
             response.put("Mensaje", "Error al realizar la consulta en la Base de Datos");
             response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
-            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if(sub == null){
             response.put("Mensaje", "La subscripcion con el ID: " + id + " no existe en la Base de Datos");
-            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
         response.put("Subscripcion", sub);
-        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);       
+        return new ResponseEntity<>(response, HttpStatus.OK);       
     
    }
    
@@ -83,16 +83,33 @@ public class SubscriptionController {
        } catch (DataAccessException e) {
             response.put("Mensaje", "Error al guardar la subscripcion en la Base de Datos");
             response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
-            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
        if(responseSave.containsKey("Mensaje")){
-           return new ResponseEntity<Map<String, Object>>(responseSave, HttpStatus.INTERNAL_SERVER_ERROR);
+           return new ResponseEntity<>(responseSave, HttpStatus.BAD_REQUEST);
        }  
-       return new ResponseEntity<Map<String, Object>>(responseSave, HttpStatus.CREATED);
+       return new ResponseEntity<>(responseSave, HttpStatus.CREATED);
           
    }
     
-    @PutMapping("/{id}")
+   public ResponseEntity<?> deleteSubscription(@PathVariable int id){
+        Map<String, Object> response = new HashMap<>();
+          boolean rpta;
+          try {
+           rpta = subService.deleteSubscription(id);
+       }catch (DataAccessException e) {
+            response.put("Mensaje", "Error al eliminar el registro en la Base de Datos");
+            response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+         if(!rpta){
+               response.put("Mensaje", "La subscripcion no se encuentra en registrada");
+               return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+         }
+          response.put("Mensaje","Plan eliminado exitosamente!");
+          return new ResponseEntity<>(response, HttpStatus.OK);
+   }
+   
     public ResponseEntity<?> updateSubscription(@RequestBody Subscription newSubs,@PathVariable int id){
         Subscription actually = subService.getById(id);
         Subscription updated = null;
@@ -111,15 +128,5 @@ public class SubscriptionController {
         response.put("Mensaje", "La subscripcion fue actualizada exitosamente!");
         response.put("Subscripcion", updated);
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
-    }
-   
-    
+    } 
 }
-
-
-/*
-
- 
-    void deleteSubscription(int id); Condiciones para que se vuelva false el estatus
-   
-*/

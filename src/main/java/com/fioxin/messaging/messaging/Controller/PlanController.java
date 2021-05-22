@@ -46,7 +46,7 @@ public class PlanController {
             response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        if(plans.size() == 0){
+        if(plans.isEmpty()){
              response.put("Mensaje", "No existen registros en la Base de Datos");
              return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
