@@ -41,7 +41,6 @@ public class UserServiceImpl implements IUserService{
         if(user !=null){
             List<Subscription> subs = subService.findSubscriptionByIdUserAndStatus(id, true);
             if(!subs.isEmpty()){
-                System.out.println("tamaño: "+subs.size());
                 subs.forEach( s -> disableSubscription(s));               
              } 
              user.setStatus(false);    
