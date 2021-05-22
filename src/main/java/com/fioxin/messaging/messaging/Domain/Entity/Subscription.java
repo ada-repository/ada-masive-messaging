@@ -43,7 +43,7 @@ public class Subscription {
     @Column(nullable=false)
     private LocalDate endDate;
     @Column(nullable=false)
-    private boolean status;
+    private boolean status = true;
     
     @JsonIgnore
     @ManyToOne

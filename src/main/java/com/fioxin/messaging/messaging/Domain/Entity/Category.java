@@ -27,7 +27,7 @@ public class Category {
     private Integer id;
     @Column(nullable=false, unique=false)
     private String name;
-    private boolean status;
+    private boolean status = true;
     
     
 }

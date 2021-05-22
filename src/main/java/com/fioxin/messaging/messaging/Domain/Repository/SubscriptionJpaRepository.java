@@ -17,4 +17,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SubscriptionJpaRepository extends JpaRepository<Subscription, Integer> {
     public List<Subscription> findByPlanIdAndUserId(int idPlan, int idUser);
+    public List<Subscription> findByUserIdAndStatus(int idUser, boolean status);
 }

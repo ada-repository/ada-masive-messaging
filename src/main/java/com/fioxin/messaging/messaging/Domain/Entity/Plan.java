@@ -36,7 +36,7 @@ public class Plan {
     private Integer term;
     @Column(name = "category_id")
     private Integer categoryId;
-    private boolean status;
+    private boolean status = true;
     
     @OneToOne
     @JoinColumn(name = "category_id", insertable = false, updatable = false)

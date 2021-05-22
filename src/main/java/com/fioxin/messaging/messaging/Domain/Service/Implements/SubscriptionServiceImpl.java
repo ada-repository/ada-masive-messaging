@@ -57,7 +57,7 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
         Subscription subs = getById(id);
         if(subs!= null){
             subs.setStatus(false);
-            saveSubscription(subs);
+            subsRepo.save(subs);
             return true;
         }else
             return false;
@@ -100,6 +100,10 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
     
     private boolean planActiveInSubs(Subscription subs){
         return subs.isStatus() == true && !( subs.getEndDate().isBefore(LocalDate.now()));
+    }
+    
+     public  List<Subscription> findSubscriptionByIdUserAndStatus(int idUser,boolean status){
+        return subsRepo.findByUserIdAndStatus(idUser, status);
     }
     
 }

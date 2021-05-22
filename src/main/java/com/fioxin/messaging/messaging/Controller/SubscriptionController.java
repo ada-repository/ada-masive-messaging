@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -92,6 +93,7 @@ public class SubscriptionController {
           
    }
     
+   @DeleteMapping("/{id}")
    public ResponseEntity<?> deleteSubscription(@PathVariable int id){
         Map<String, Object> response = new HashMap<>();
           boolean rpta;
@@ -116,17 +118,17 @@ public class SubscriptionController {
         Map<String, Object> response = new HashMap<>();
         if(actually == null){
           response.put("Error", " No se pudo editar ,la susbcricion con ID: " + id + ". No existe en la Base de Datos");
-          return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+          return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
        }
         try {
             updated = subService.updateSubscription(actually, newSubs);
         } catch (DataAccessException e) {
             response.put("Mensaje", "Error al actualizar la subscripcion en la Base de Datos");
             response.put("Error", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
-            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);        
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);        
          }
         response.put("Mensaje", "La subscripcion fue actualizada exitosamente!");
         response.put("Subscripcion", updated);
-        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     } 
 }

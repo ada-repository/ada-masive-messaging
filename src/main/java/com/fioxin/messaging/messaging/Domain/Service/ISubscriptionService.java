@@ -20,4 +20,5 @@ public interface ISubscriptionService {
     Subscription updateSubscription(Subscription actually,Subscription newSubs);
     boolean deleteSubscription(int id);
     Map<String, Object> saveSubscription(Subscription subscription);
+    List<Subscription> findSubscriptionByIdUserAndStatus(int idUser,boolean status);
 }

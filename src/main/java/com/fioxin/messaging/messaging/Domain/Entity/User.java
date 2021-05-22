@@ -11,10 +11,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import lombok.Data;
 
 /**
  * User
  */
+@Data
 @Entity
 @Table(name = "users")
 public class User {
@@ -22,12 +24,12 @@ public class User {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
    
-    @Column(nullable=false, unique=false) 
+    @Column(nullable=false) 
     private String name;
 
-    @Column(nullable=false, unique=false)
+    @Column(nullable=false, unique=true)
     private String dni;
-    @Column(nullable=false, unique=false)
+    @Column(nullable=false, unique=true)
     private String email;
 
     @Column(nullable=false, unique=true)
@@ -38,93 +40,13 @@ public class User {
     @Column(nullable=false)
     private boolean sendBalance;
     @Column(nullable=false)
-    private boolean status;
+    private boolean status  = true;
 
     @OneToMany(mappedBy = "user")
     private List<NotificationMessage> messages;
 
     @OneToMany(mappedBy = "user")
     private List<Subscription> subscription;
-    
-    public User() {
-    }
-
-    public List<Subscription> getSubscription() {
-        return subscription;
-    }
-
-    public void setSubscription(List<Subscription> subscription) {
-        this.subscription = subscription;
-    }
-
-
-    public Integer getId() {
-        return this.id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDni() {
-        return this.dni;
-    }
-
-    public void setDni(String dni) {
-        this.dni = dni;
-    }
-
-    public String getEmail() {
-        return this.email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return this.phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public Date getCreatedAt() {
-        return this.createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public boolean isStatus() {
-        return this.status;
-    }
-
-    public boolean getStatus() {
-        return this.status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
-    
-
-    public List<NotificationMessage> getMessages() {
-        return this.messages;
-    }
-
-    public void setMessages(List<NotificationMessage> messages) {
-        this.messages = messages;
-    }
+   
     
 }

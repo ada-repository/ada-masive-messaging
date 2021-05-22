@@ -72,18 +72,21 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable int id){
-        Map<String, Object> response = new HashMap<>();
-       
+        Map<String, Object> response = new HashMap<>();      
+        boolean rpta;
         try {
-            userService.deleteUser(id);
+           rpta = userService.deleteUser(id);
         } catch (DataAccessException e) {
             response.put("Mensaje", "Error al eliminar al usuario en la Base de Datos");
             response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        if(!rpta){
+            response.put("Mensaje","Usuario no encontrado!");
+             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);    
+        }
        response.put("Mensaje","Usuario eliminado exitosamente!");
-       return new ResponseEntity<>(response, HttpStatus.OK);
-       
+       return new ResponseEntity<>(response, HttpStatus.OK);    
     }
 
     @PostMapping("/save")
