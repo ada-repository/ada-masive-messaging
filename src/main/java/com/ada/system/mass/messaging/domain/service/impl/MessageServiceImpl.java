@@ -13,6 +13,7 @@ import com.ada.system.mass.messaging.domain.service.IPlanService;
 import com.ada.system.mass.messaging.domain.entity.Subscription;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
+import java.net.URI;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ import org.springframework.stereotype.Service;
 public class MessageServiceImpl implements IMessageService{
 
     public static final String ACCOUNT_SID = "ACa46c31f03e3a56eb1fe96d771c4e8dcb";
-    public static final String AUTH_TOKEN = "";
+    public static final String AUTH_TOKEN = "730a60b0c94e06666cf0dbe87feffb5a";
 
     @Autowired
     private MessageJpaRepository messageRepo;
@@ -111,7 +112,7 @@ public class MessageServiceImpl implements IMessageService{
        if(empty.size() >0){
            List<String> vac = new ArrayList<>();
            empty.forEach( list -> {
-               vac.add(list.getNameReceiver());
+               vac.add(list.getCodCli());
            });
             response.put("Estos usuarios no tienen numero de telefono asociados", vac);
             return response;
@@ -124,15 +125,17 @@ public class MessageServiceImpl implements IMessageService{
                     new com.twilio.type.PhoneNumber(number), //to
                     new com.twilio.type.PhoneNumber("+12057076733"),      //from          
                     finalMessage)
-                    .create();
+                     .setStatusCallback("http://localhost:8081/messages/save/updateStatus")
+                     .create();
                     NotificationMessage notification = new NotificationMessage();           
                     notification.setReceiverNumber(number);
                     notification.setMessage(finalMessage);
                     notification.setStatus(message.getStatus().toString());
-                    notification.setNameReceiver(sms.getNameReceiver());
+                    notification.setCodCli(sms.getCodCli());
                     notification.setCreatedAt(Date.from(message.getDateCreated().toInstant()));
                     notification.setSubject(sms.getSubject());
                     notification.setUserId(user.getId());  
+                    notification.setSid(message.getSid());
                     listNoti.add(notification);  
                   }                
           }           

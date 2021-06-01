@@ -60,5 +60,5 @@ public class MessageController {
         response = messageService.sendMessage(message);
         return new ResponseEntity<Map<String, Object>>(response,HttpStatus.CREATED);
           
-    }    
+    } 
 }
