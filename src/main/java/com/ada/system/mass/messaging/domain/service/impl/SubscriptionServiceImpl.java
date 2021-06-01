@@ -90,7 +90,8 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
             }
         }
         
-        int duration = plan.getTerm(); 
+        int duration = plan.getTerm();
+        subscription.setStartDate(LocalDate.now());
         subscription.setEndDate(subscription.getStartDate().plusDays(duration));
         subscription.setStatus(true);
         Subscription sub = subsRepo.save(subscription);
