@@ -1,6 +1,6 @@
 package com.ada.system.mass.messaging.domain.entity;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -35,7 +35,7 @@ public class User {
     private String phone;
     
     @Column(nullable=false)
-    private Date createdAt;
+    private LocalDate createdAt = LocalDate.now();
     @Column(nullable=false)
     private boolean sendBalance;
     @Column(nullable=false)

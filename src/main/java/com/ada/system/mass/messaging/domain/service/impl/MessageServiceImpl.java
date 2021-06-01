@@ -1,4 +1,4 @@
-package com.ada.system.mass.messaging.domain.service.impl;
+ package com.ada.system.mass.messaging.domain.service.impl;
 
 import java.util.Date;
 import java.util.List;
@@ -133,7 +133,7 @@ public class MessageServiceImpl implements IMessageService{
                     notification.setMessage(finalMessage);
                     notification.setStatus(message.getStatus().toString());
                     notification.setCodCli(sms.getCodCli());
-                    notification.setCreatedAt(Date.from(message.getDateCreated().toInstant()));
+                    notification.setCreatedAt(LocalDate.now());
                     notification.setSubject(sms.getSubject());
                     notification.setUserId(user.getId());  
                     notification.setSid(message.getSid());
@@ -160,12 +160,3 @@ public class MessageServiceImpl implements IMessageService{
         return "".equals(sms.getReceiverNumber());
 }
 }
-/*  System.out.println("SID: "+message.getSid());
-         System.out.println("BODY: "+message.getBody());
-         System.out.println("ERROR MESSAGE: "+message.getErrorMessage());
-         System.out.println("NUM MEDIA: "+message.getNumMedia());
-         System.out.println("DATE CREATED: "+message.getDateCreated());
-         System.out.println("DIRECCION: "+message.getDirection());
-         System.out.println("ESTATUS: "+message.getStatus());
-         System.out.println("ERROR CODE: "+message.getErrorCode());
-*/

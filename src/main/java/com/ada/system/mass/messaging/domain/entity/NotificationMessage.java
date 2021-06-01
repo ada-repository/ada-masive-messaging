@@ -1,6 +1,5 @@
 package com.ada.system.mass.messaging.domain.entity;
 
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.time.LocalDate;
 import lombok.Data;
 
 @Data
@@ -24,7 +24,7 @@ public class NotificationMessage {
     private String codCli;
     private String message;
     private String receiverNumber;
-    private Date createdAt;
+    private LocalDate createdAt;
     private String subject;
     private String sid;
     @Column(name = "user_id")
