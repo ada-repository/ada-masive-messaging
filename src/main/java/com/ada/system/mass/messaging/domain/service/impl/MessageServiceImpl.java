@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service;
 public class MessageServiceImpl implements IMessageService{
 
     public static final String ACCOUNT_SID = "ACa46c31f03e3a56eb1fe96d771c4e8dcb";
-    public static final String AUTH_TOKEN = "730a60b0c94e06666cf0dbe87feffb5a";
+    public static final String AUTH_TOKEN = "";
 
     @Autowired
     private MessageJpaRepository messageRepo;
@@ -125,7 +125,6 @@ public class MessageServiceImpl implements IMessageService{
                     new com.twilio.type.PhoneNumber(number), //to
                     new com.twilio.type.PhoneNumber("+12057076733"),      //from          
                     finalMessage)
-                     .setStatusCallback("http://localhost:8081/messages/save/updateStatus")
                      .create();
                     NotificationMessage notification = new NotificationMessage();           
                     notification.setReceiverNumber(number);
