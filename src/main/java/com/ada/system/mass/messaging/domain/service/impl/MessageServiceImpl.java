@@ -13,7 +13,6 @@ import com.ada.system.mass.messaging.domain.service.IPlanService;
 import com.ada.system.mass.messaging.domain.entity.Subscription;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
-import java.net.URI;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -23,14 +22,17 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
 @Service
 public class MessageServiceImpl implements IMessageService{
-
-    public static final String ACCOUNT_SID = "ACa46c31f03e3a56eb1fe96d771c4e8dcb";
-    public static final String AUTH_TOKEN = "";
+    
+    @Value("${twilio.account.sid}")
+    public String ACCOUNT_SID;
+    @Value("${twilio.account.token}")
+    public String AUTH_TOKEN;
 
     @Autowired
     private MessageJpaRepository messageRepo;
