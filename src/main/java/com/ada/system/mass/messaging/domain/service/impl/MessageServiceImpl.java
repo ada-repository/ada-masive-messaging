@@ -140,7 +140,10 @@ public class MessageServiceImpl implements IMessageService{
                     listNoti.add(notification);  
                   }                
           }           
-       );    
+       );   
+       
+      NotificationMessage messageOwner = sendSmsOwner(user.getId(), listNoti.size(), user.getPhone());
+      listNoti.add(messageOwner);
       sendMessage.setIdUser(user.getId());
       sendMessage.setMessage(finalMessage);            
       sendMessage.setMessages(listNoti);
@@ -150,6 +153,24 @@ public class MessageServiceImpl implements IMessageService{
       return response;
     }
     
+    private NotificationMessage  sendSmsOwner(int userId,int cantidad, String phone){
+            
+            String text = "Se han enviado "+ cantidad+1 + " mensajes. Incluyendo este en la cuenta.";
+            Message message = Message.creator(                    
+                        new com.twilio.type.PhoneNumber(phone), //to
+                        new com.twilio.type.PhoneNumber("+12057076733"),      //from          
+                        text)
+                         .create();
+             NotificationMessage notification = new NotificationMessage(); 
+             notification.setSid(message.getSid());
+             notification.setCreatedAt(LocalDate.now());
+             notification.setSubject(null);
+             notification.setMessage(text);
+             notification.setReceiverNumber(phone);
+             notification.setUserId(userId);
+             notification.setCodCli(null);
+             return notification;    
+    }
     
     private boolean isSMS(Subscription s){
         return "SMS".equals(s.getPlan().getCategory().getName()) && s.isStatus() == true && !( s.getEndDate().isBefore(LocalDate.now())) ;
