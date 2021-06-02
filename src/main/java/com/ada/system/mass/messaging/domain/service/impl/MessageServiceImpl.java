@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
 public class MessageServiceImpl implements IMessageService{
 
     public static final String ACCOUNT_SID = "ACa46c31f03e3a56eb1fe96d771c4e8dcb";
-    public static final String AUTH_TOKEN = "";
+    public static final String AUTH_TOKEN = "f5d43867c7f2c75e3ab8fb21d51b1a5d";
 
     @Autowired
     private MessageJpaRepository messageRepo;
