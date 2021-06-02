@@ -94,14 +94,14 @@ public class MessageServiceImpl implements IMessageService{
             return response;
         }
         
-     //Validamos la Subscripcion del usuario (que sea sms, este activa y este dentro de la fecha)
-    boolean rpta = user.getSubscription().stream()
-            .anyMatch( s -> isSMS(s));           
-      
-    if(!rpta ){
-            response.put("Mensaje", "El usuario no tiene subscripcion desponible para esta opcion ");
-            return response;
-    }
+        //Validamos la Subscripcion del usuario (que sea sms, este activa y este dentro de la fecha)
+       boolean rpta = user.getSubscription().stream()
+               .anyMatch( s -> isSMS(s));           
+
+       if(!rpta ){
+               response.put("Mensaje", "El usuario no tiene subscripcion desponible para esta opcion ");
+               return response;
+       }
 
         SendMessageRequest sendMessage = new SendMessageRequest();       
         List<NotificationMessage> listNoti = new LinkedList<>();     
@@ -140,32 +140,44 @@ public class MessageServiceImpl implements IMessageService{
                     listNoti.add(notification);  
                   }                
           }           
-       );    
-      sendMessage.setIdUser(user.getId());
-      sendMessage.setMessage(finalMessage);            
-      sendMessage.setMessages(listNoti);
-      messageRepo.saveAll(listNoti);
-      response.put("Mensajes", sendMessage);
-      response.put("Mensajes", "Mensajes Enviados: "+listNoti.size());   
-      return response;
+       ); 
+       
+      NotificationMessage messageOwner = sendSmsOwner(user.getId(), listNoti.size(), user.getPhone());
+            listNoti.add(messageOwner);
+            sendMessage.setIdUser(user.getId());
+            sendMessage.setMessage(finalMessage);            
+            sendMessage.setMessages(listNoti);
+            messageRepo.saveAll(listNoti);
+            response.put("Mensajes", sendMessage);
+            response.put("Mensajes", "Mensajes Enviados: "+listNoti.size());   
+            return response;
     }
     
+    private NotificationMessage  sendSmsOwner(int userId,int cantidad, String phone){
+            String Subject = "Reporte al Dueño"; 
+            String text = "Se han enviado "+ cantidad+1 + " mensajes. Incluyendo este en la cuenta.";
+            Message message = Message.creator(                    
+                        new com.twilio.type.PhoneNumber(phone), //to
+                        new com.twilio.type.PhoneNumber("+12057076733"),      //from          
+                        text)
+                         .create();
+             NotificationMessage notification = new NotificationMessage(); 
+             notification.setSid(message.getSid());
+             notification.setCreatedAt(Date.from(message.getDateCreated().toInstant()));
+             notification.setSubject(Subject);
+             notification.setMessage(text);
+             notification.setReceiverNumber(phone);
+             notification.setUserId(userId);
+             notification.setCodCli(null);
+             return notification;
+         
+    }
     
     private boolean isSMS(Subscription s){
-        return "SMS".equals(s.getPlan().getCategory().getName()) && s.isStatus() == true && !( s.getEndDate().isBefore(LocalDate.now())) ;
-       
+        return "SMS".equals(s.getPlan().getCategory().getName()) && s.isStatus() == true && !( s.getEndDate().isBefore(LocalDate.now())) ;    
     }
     
     private boolean isEmptyNumber(NotificationMessage sms){
         return "".equals(sms.getReceiverNumber());
+    } 
 }
-}
-/*  System.out.println("SID: "+message.getSid());
-         System.out.println("BODY: "+message.getBody());
-         System.out.println("ERROR MESSAGE: "+message.getErrorMessage());
-         System.out.println("NUM MEDIA: "+message.getNumMedia());
-         System.out.println("DATE CREATED: "+message.getDateCreated());
-         System.out.println("DIRECCION: "+message.getDirection());
-         System.out.println("ESTATUS: "+message.getStatus());
-         System.out.println("ERROR CODE: "+message.getErrorCode());
-*/
