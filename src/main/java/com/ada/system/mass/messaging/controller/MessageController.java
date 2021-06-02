@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,35 +31,62 @@ public class MessageController {
    
 
     @GetMapping("/all")
-    public List<NotificationMessage> getAllMessages(){
-        return messageService.getAllMessages();
+    public ResponseEntity<?> getAllMessages(){
+        Map<String, Object> response = new HashMap<>();
+        List<NotificationMessage> messages = null;
+        try {
+            messages =  messageService.getAllMessages();
+        } catch (DataAccessException e) {
+            response.put("Mensaje", "Error al realizar la consulta en la Base de Datos");
+            response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        if(messages.isEmpty()){
+             response.put("Mensaje", "No existen registros en la Base de Datos");
+             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);       
+        }
+        response.put("Messages", messages);
+        return new ResponseEntity<>(response, HttpStatus.OK);     
     }
+    
+    
+    
     @GetMapping("/{id}")
-    public NotificationMessage getMessage(@PathVariable int id){
-        return messageService.getMessage(id);
+    public ResponseEntity<?> getMessage(@PathVariable int id){
+        Map<String, Object> response = new HashMap<>();
+        NotificationMessage sms = null;
+        try {
+            sms =  messageService.getMessage(id);
+        } catch (DataAccessException e) {
+            response.put("Mensaje", "Error al realizar la consulta en la Base de Datos");
+            response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        if(sms == null){
+            response.put("Mensaje", "La el mensaje con el ID: " + id + " no existe en la Base de Datos");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+        response.put("Message", sms);
+        return new ResponseEntity<>(response, HttpStatus.OK); 
+       
     }
     
-    
-    @DeleteMapping("/{id}")
-    public void deleteMessage(@PathVariable int id){
-        messageService.deleteMessage(id);
-    }
-
-    @GetMapping("/{idUser}/{number}")
-    public  List<NotificationMessage> getMessagesByReceiverNumb(@PathVariable int idUser, @PathVariable String number){
-        return messageService.findByReceiverNumberAndUserId(idUser, number);
-    }
-
-    @GetMapping("/user/{idUser}")
-    public List<NotificationMessage> getMessagesByUserId(@PathVariable int idUser){
-        return messageService.getMessagesByIdUser(idUser);
-    }
-
     @PostMapping("/save")
     public ResponseEntity<?> sendMessage(@RequestBody SendMessageRequest message){       
          Map<String, Object> response = new HashMap<>(); 
-        response = messageService.sendMessage(message);
-        return new ResponseEntity<Map<String, Object>>(response,HttpStatus.CREATED);
+         try {
+            response = messageService.sendMessage(message);
+        } catch (DataAccessException e) {
+            response.put("Mensaje", "Error al realizar la consulta en la Base de Datos");
+            response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+          if(response.containsKey("Mensaje")){
+           return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+       }  
+        return new ResponseEntity<>(response,HttpStatus.CREATED);
           
     } 
+    
+    
 }

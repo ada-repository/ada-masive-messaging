@@ -54,13 +54,6 @@ public class MessageServiceImpl implements IMessageService{
        return messageRepo.findById(id).orElse(null);
     }
 
-    
-
-    @Override
-    public void deleteMessage(int id) {
-       messageRepo.deleteById(id);
-        
-    }
 
     @Override
     public List<NotificationMessage> getMessagesByIdUser(int idUser) {       
@@ -148,12 +141,13 @@ public class MessageServiceImpl implements IMessageService{
       sendMessage.setMessages(listNoti);
       messageRepo.saveAll(listNoti);
       response.put("Mensajes", "Mensajes Enviados: "+listNoti.size());   
+      
       return response;
     }
     
     private NotificationMessage  sendSmsOwner(int userId,int cantidad, String phone){
             
-            String text = "Se han enviado la cantdidad de  "+ cantidad++ + " mensajes. Incluyendo este en la cuenta.";
+            String text = "Se han enviado la cantdidad de  "+ cantidad+(1) + " mensajes. Incluyendo este en la cuenta.";
             Message message = Message.creator(                    
                         new com.twilio.type.PhoneNumber(phone), //to
                         new com.twilio.type.PhoneNumber("+12057076733"),      //from          
