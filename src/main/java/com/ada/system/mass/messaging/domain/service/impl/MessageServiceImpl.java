@@ -82,6 +82,7 @@ public class MessageServiceImpl implements IMessageService{
         Map<String, Object> response = new HashMap<>();      
         User user = userService.getUser(messages.getIdUser());
         String finalMessage = messages.getMessage();
+         List<String>  vacios =null ;
         if(user == null){
             response.put("Mensaje", "Usuario no existe en la Base de datos");
             return response;
@@ -105,11 +106,7 @@ public class MessageServiceImpl implements IMessageService{
                .filter( sms -> isEmptyNumber(sms)).collect(Collectors.toList());
         
        if(empty.size() >0){
-           List<String> vac = new ArrayList<>();
-           empty.forEach( list -> {
-               vac.add(list.getCodCli());
-           });
-            response.put("Estos usuarios no tienen numero de telefono asociados", vac);
+          vacios = numbersVac(empty);
        }
        messages.getMessages().forEach( (sms) -> {
            
@@ -140,14 +137,13 @@ public class MessageServiceImpl implements IMessageService{
       sendMessage.setMessage(finalMessage);            
       sendMessage.setMessages(listNoti);
       messageRepo.saveAll(listNoti);
-      response.put("Mensajes", "Mensajes Enviados: "+listNoti.size());   
-      
+      response.put("Mensajes", "Mensajes Enviados: "+listNoti.size()+ " Y no se enviaron mensajes a los siguientes usuarios: "+vacios);         
       return response;
     }
     
     private NotificationMessage  sendSmsOwner(int userId,int cantidad, String phone){
-            
-            String text = "Se han enviado la cantdidad de  "+ cantidad+(1) + " mensajes. Incluyendo este en la cuenta.";
+            int cantidadT = cantidad+1;
+            String text = "Se han enviado la cantdidad de  "+ cantidadT+ " mensajes. Incluyendo este en la cuenta.";
             Message message = Message.creator(                    
                         new com.twilio.type.PhoneNumber(phone), //to
                         new com.twilio.type.PhoneNumber("+12057076733"),      //from          
@@ -172,4 +168,12 @@ public class MessageServiceImpl implements IMessageService{
     private boolean isEmptyNumber(NotificationMessage sms){
         return "".equals(sms.getReceiverNumber());
 }
+    
+    private List<String> numbersVac(List<NotificationMessage> empty){
+        List<String> vac = new ArrayList<>();
+        empty.forEach( list -> {
+               vac.add(list.getCodCli());
+           });
+           return vac;
+    }
 }
