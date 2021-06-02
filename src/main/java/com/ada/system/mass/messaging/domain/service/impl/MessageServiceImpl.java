@@ -117,7 +117,6 @@ public class MessageServiceImpl implements IMessageService{
                vac.add(list.getCodCli());
            });
             response.put("Estos usuarios no tienen numero de telefono asociados", vac);
-            return response;
        }
        messages.getMessages().forEach( (sms) -> {
            
@@ -148,14 +147,13 @@ public class MessageServiceImpl implements IMessageService{
       sendMessage.setMessage(finalMessage);            
       sendMessage.setMessages(listNoti);
       messageRepo.saveAll(listNoti);
-      response.put("Mensajes", sendMessage);
       response.put("Mensajes", "Mensajes Enviados: "+listNoti.size());   
       return response;
     }
     
     private NotificationMessage  sendSmsOwner(int userId,int cantidad, String phone){
             
-            String text = "Se han enviado "+ cantidad+1 + " mensajes. Incluyendo este en la cuenta.";
+            String text = "Se han enviado la cantdidad de  "+ cantidad++ + " mensajes. Incluyendo este en la cuenta.";
             Message message = Message.creator(                    
                         new com.twilio.type.PhoneNumber(phone), //to
                         new com.twilio.type.PhoneNumber("+12057076733"),      //from          
