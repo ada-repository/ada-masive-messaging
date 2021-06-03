@@ -77,7 +77,7 @@ public class MessageServiceImpl implements IMessageService{
         return null;
     }
     
-    @Override
+   @Override
     public Map<String, Object> sendMessage(SendMessageRequest messages) {      
         Map<String, Object> response = new HashMap<>();      
         User user = userService.getUser(messages.getIdUser());
@@ -97,18 +97,27 @@ public class MessageServiceImpl implements IMessageService{
             return response;
     }
 
-        SendMessageRequest sendMessage = new SendMessageRequest();       
-        List<NotificationMessage> listNoti = new LinkedList<>();     
-        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);  
+       
         
        List<NotificationMessage> empty =  messages.getMessages()
-               .stream()
-               .filter( sms -> isEmptyNumber(sms)).collect(Collectors.toList());
+                                                                                                                    .stream()
+                                                                                                                    .filter( sms -> isEmptyNumber(sms))
+                                                                                                                    .collect(Collectors.toList());
         
        if(empty.size() >0){
           vacios = numbersVac(empty);
        }
-       messages.getMessages().forEach( (sms) -> {
+       
+       List<NotificationMessage> finalsms = messages.getMessages()
+                                                                                                                        .stream()
+                                                                                                                        .filter(sms -> !isEmptyNumber(sms))
+                                                                                                                        .collect(Collectors.toList());
+        
+     
+        SendMessageRequest sendMessage = new SendMessageRequest();       
+        List<NotificationMessage> listNoti = new LinkedList<>();     
+        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);  
+       finalsms.forEach( (sms) -> {
            
              String[] numbers = sms.getReceiverNumber().split(",");   
                 for(String number : numbers ){
@@ -145,7 +154,7 @@ public class MessageServiceImpl implements IMessageService{
             int cantidadT = cantidad+1;
             String text = "Se han enviado la cantdidad de  "+ cantidadT+ " mensajes. Incluyendo este en la cuenta.";
             Message message = Message.creator(                    
-                        new com.twilio.type.PhoneNumber(phone), //to
+                        new com.twilio.type.PhoneNumber("+"+phone), //to
                         new com.twilio.type.PhoneNumber("+12057076733"),      //from          
                         text)
                          .create();
@@ -161,13 +170,12 @@ public class MessageServiceImpl implements IMessageService{
     }
     
     private boolean isSMS(Subscription s){
-        return "SMS".equals(s.getPlan().getCategory().getName()) && s.isStatus() == true && !( s.getEndDate().isBefore(LocalDate.now())) ;
-       
+        return "SMS".equals(s.getPlan().getCategory().getName()) && s.isStatus() == true && !( s.getEndDate().isBefore(LocalDate.now())) ; 
     }
     
     private boolean isEmptyNumber(NotificationMessage sms){
         return "".equals(sms.getReceiverNumber());
-}
+    }
     
     private List<String> numbersVac(List<NotificationMessage> empty){
         List<String> vac = new ArrayList<>();
@@ -175,5 +183,5 @@ public class MessageServiceImpl implements IMessageService{
                vac.add(list.getCodCli());
            });
            return vac;
+      }    
     }
-}

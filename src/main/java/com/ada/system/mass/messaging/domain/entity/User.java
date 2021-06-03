@@ -23,6 +23,9 @@ public class User {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
    
+    @Column(nullable=false, unique=true)
+    private String originCod;
+    
     @Column(nullable=false) 
     private String name;
 
