@@ -80,12 +80,13 @@ public class MessageServiceImpl implements IMessageService{
         
         return null;
     }
-    
-    @Override
+ 
+@Override
     public Map<String, Object> sendMessage(SendMessageRequest messages) {      
         Map<String, Object> response = new HashMap<>();      
         User user = userService.getUser(messages.getIdUser());
         String finalMessage = messages.getMessage();
+         List<String>  vacios =null ;
         if(user == null){
             response.put("Mensaje", "Usuario no existe en la Base de datos");
             return response;
@@ -100,23 +101,27 @@ public class MessageServiceImpl implements IMessageService{
             return response;
     }
 
+       
+        
+       List<NotificationMessage> empty =  messages.getMessages()
+                                                                                                                    .stream()
+                                                                                                                    .filter( sms -> isEmptyNumber(sms))
+                                                                                                                    .collect(Collectors.toList());
+        
+       if(empty.size() >0){
+          vacios = numbersVac(empty);
+       }
+       
+       List<NotificationMessage> finalsms = messages.getMessages()
+                                                                                                                        .stream()
+                                                                                                                        .filter(sms -> !isEmptyNumber(sms))
+                                                                                                                        .collect(Collectors.toList());
+        
+     
         SendMessageRequest sendMessage = new SendMessageRequest();       
         List<NotificationMessage> listNoti = new LinkedList<>();     
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);  
-        
-       List<NotificationMessage> empty =  messages.getMessages()
-               .stream()
-               .filter( sms -> isEmptyNumber(sms)).collect(Collectors.toList());
-        
-       if(empty.size() >0){
-           List<String> vac = new ArrayList<>();
-           empty.forEach( list -> {
-               vac.add(list.getNameReceiver());
-           });
-            response.put("Estos usuarios no tienen numero de telefono asociados", vac);
-            return response;
-       }
-       messages.getMessages().forEach( (sms) -> {
+       finalsms.forEach( (sms) -> {
            
              String[] numbers = sms.getReceiverNumber().split(",");   
                 for(String number : numbers ){
@@ -124,44 +129,63 @@ public class MessageServiceImpl implements IMessageService{
                     new com.twilio.type.PhoneNumber(number), //to
                     new com.twilio.type.PhoneNumber("+12057076733"),      //from          
                     finalMessage)
-                    .create();
+                     .create();
                     NotificationMessage notification = new NotificationMessage();           
                     notification.setReceiverNumber(number);
                     notification.setMessage(finalMessage);
                     notification.setStatus(message.getStatus().toString());
-                    notification.setNameReceiver(sms.getNameReceiver());
-                    notification.setCreatedAt(Date.from(message.getDateCreated().toInstant()));
+                    notification.setCodCli(sms.getCodCli());
+                    notification.setCreatedAt(LocalDate.now());
                     notification.setSubject(sms.getSubject());
                     notification.setUserId(user.getId());  
+                    notification.setSid(message.getSid());
                     listNoti.add(notification);  
                   }                
           }           
-       );    
+       );   
+       
+      NotificationMessage messageOwner = sendSmsOwner(user.getId(), listNoti.size(), user.getPhone());
+      listNoti.add(messageOwner);
       sendMessage.setIdUser(user.getId());
       sendMessage.setMessage(finalMessage);            
       sendMessage.setMessages(listNoti);
       messageRepo.saveAll(listNoti);
-      response.put("Mensajes", sendMessage);
-      response.put("Mensajes", "Mensajes Enviados: "+listNoti.size());   
+      response.put("Mensajes", "Mensajes Enviados: "+listNoti.size()+ " Y no se enviaron mensajes a los siguientes usuarios: "+vacios);         
       return response;
     }
     
+    private NotificationMessage  sendSmsOwner(int userId,int cantidad, String phone){
+            int cantidadT = cantidad+1;
+            String text = "Se han enviado la cantdidad de  "+ cantidadT+ " mensajes. Incluyendo este en la cuenta.";
+            Message message = Message.creator(                    
+                        new com.twilio.type.PhoneNumber("+"+phone), //to
+                        new com.twilio.type.PhoneNumber("+12057076733"),      //from          
+                        text)
+                         .create();
+             NotificationMessage notification = new NotificationMessage(); 
+             notification.setSid(message.getSid());
+             notification.setCreatedAt(LocalDate.now());
+             notification.setSubject(null);
+             notification.setMessage(text);
+             notification.setReceiverNumber(phone);
+             notification.setUserId(userId);
+             notification.setCodCli(null);
+             return notification;    
+    }
     
     private boolean isSMS(Subscription s){
-        return "SMS".equals(s.getPlan().getCategory().getName()) && s.isStatus() == true && !( s.getEndDate().isBefore(LocalDate.now())) ;
-       
+        return "SMS".equals(s.getPlan().getCategory().getName()) && s.isStatus() == true && !( s.getEndDate().isBefore(LocalDate.now())) ; 
     }
     
     private boolean isEmptyNumber(NotificationMessage sms){
         return "".equals(sms.getReceiverNumber());
-}
-}
-/*  System.out.println("SID: "+message.getSid());
-         System.out.println("BODY: "+message.getBody());
-         System.out.println("ERROR MESSAGE: "+message.getErrorMessage());
-         System.out.println("NUM MEDIA: "+message.getNumMedia());
-         System.out.println("DATE CREATED: "+message.getDateCreated());
-         System.out.println("DIRECCION: "+message.getDirection());
-         System.out.println("ESTATUS: "+message.getStatus());
-         System.out.println("ERROR CODE: "+message.getErrorCode());
-*/
+    }
+    
+    private List<String> numbersVac(List<NotificationMessage> empty){
+        List<String> vac = new ArrayList<>();
+        empty.forEach( list -> {
+               vac.add(list.getCodCli());
+           });
+           return vac;
+      }    
+    }
