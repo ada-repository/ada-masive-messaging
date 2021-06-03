@@ -80,8 +80,8 @@ public class MessageServiceImpl implements IMessageService{
    @Override
     public Map<String, Object> sendMessage(SendMessageRequest messages) {      
         Map<String, Object> response = new HashMap<>();      
-        User user = userService.getUser(messages.getIdUser());
-        String finalMessage = messages.getMessage();
+        User user = userService.getUser(messages.getCodiEmpr());
+        String finalMessage = messages.getMensaEmpr();
          List<String>  vacios =null ;
         if(user == null){
             response.put("Mensaje", "Usuario no existe en la Base de datos");
@@ -142,11 +142,11 @@ public class MessageServiceImpl implements IMessageService{
        
       NotificationMessage messageOwner = sendSmsOwner(user.getId(), listNoti.size(), user.getPhone());
       listNoti.add(messageOwner);
-      sendMessage.setIdUser(user.getId());
-      sendMessage.setMessage(finalMessage);            
+      sendMessage.setCodiEmpr(user.getId());
+      sendMessage.setMensaEmpr(finalMessage);            
       sendMessage.setMessages(listNoti);
       messageRepo.saveAll(listNoti);
-      response.put("Mensajes", "Mensajes Enviados: "+listNoti.size()+ " Y no se enviaron mensajes a los siguientes usuarios: "+vacios);         
+      response.put("Mensajes", "Mensajes Enviados: "+listNoti.size()+ ".\n Mensajes fallidos :  "+vacios.size() +"\n"+vacios);         
       return response;
     }
     
