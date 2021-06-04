@@ -5,12 +5,7 @@ import lombok.Data;
 
 @Data
 public class SendMessageRequest {
-     private Integer codiEmpr;
+    private Integer codiEmpr;
     private String mensaEmpr;
-    private List<NotificationMessage> messages;
-
-
-
-    public SendMessageRequest() {
-    }
+    private List<ClientesNotification> clientes; 
 }

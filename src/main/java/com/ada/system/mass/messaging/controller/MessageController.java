@@ -5,6 +5,7 @@ import java.util.List;
 import com.ada.system.mass.messaging.domain.service.IMessageService;
 import com.ada.system.mass.messaging.domain.entity.NotificationMessage;
 import com.ada.system.mass.messaging.domain.entity.SendMessageRequest;
+import com.ada.system.mass.messaging.utils.Util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +28,7 @@ public class MessageController {
     @Autowired
     private IMessageService messageService;
     
-   
+   Util util = new Util();
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllMessages(){
@@ -74,8 +74,11 @@ public class MessageController {
     @PostMapping("/save")
     public ResponseEntity<?> sendMessage(@RequestBody SendMessageRequest message){       
          Map<String, Object> response = new HashMap<>(); 
+         System.out.println("Mensaje:"+message.getMensaEmpr());
+         System.out.println("Id:"+message.getCodiEmpr());
+         List<NotificationMessage> messages =  util.mappingSendMessageToNotificationMessage(message.getClientes());
          try {
-            response = messageService.sendMessage(message);
+            response = messageService.sendMessage(message.getCodiEmpr(),message.getMensaEmpr(),messages);
         } catch (DataAccessException e) {
             response.put("Mensaje", "Error al realizar la consulta en la Base de Datos");
             response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
@@ -86,7 +89,6 @@ public class MessageController {
        }  
         return new ResponseEntity<>(response,HttpStatus.CREATED);
           
-    } 
-    
+    }
     
 }

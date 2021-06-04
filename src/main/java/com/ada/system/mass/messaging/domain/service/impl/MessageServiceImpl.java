@@ -78,10 +78,9 @@ public class MessageServiceImpl implements IMessageService{
     }
     
    @Override
-    public Map<String, Object> sendMessage(SendMessageRequest messages) {      
+    public Map<String, Object> sendMessage(int codEmpresa, String finalMessage,List<NotificationMessage> messages) {      
         Map<String, Object> response = new HashMap<>();      
-        User user = userService.getUser(messages.getCodiEmpr());
-        String finalMessage = messages.getMensaEmpr();
+        User user = userService.getUser(codEmpresa);
          List<String>  vacios =null ;
         if(user == null){
             response.put("Mensaje", "Usuario no existe en la Base de datos");
@@ -99,22 +98,18 @@ public class MessageServiceImpl implements IMessageService{
 
        
         
-       List<NotificationMessage> empty =  messages.getMessages()
-                                                                                                                    .stream()
-                                                                                                                    .filter( sms -> isEmptyNumber(sms))
-                                                                                                                    .collect(Collectors.toList());
+       List<NotificationMessage> empty =  messages.stream()
+                                                                                          .filter( sms -> isEmptyNumber(sms))
+                                                                                          .collect(Collectors.toList());
         
        if(empty.size() >0){
           vacios = numbersVac(empty);
        }
        
-       List<NotificationMessage> finalsms = messages.getMessages()
-                                                                                                                        .stream()
-                                                                                                                        .filter(sms -> !isEmptyNumber(sms))
-                                                                                                                        .collect(Collectors.toList());
-        
-     
-        SendMessageRequest sendMessage = new SendMessageRequest();       
+       List<NotificationMessage> finalsms = messages .stream()
+                                                                                              .filter(sms -> !isEmptyNumber(sms))
+                                                                                              .collect(Collectors.toList());
+         
         List<NotificationMessage> listNoti = new LinkedList<>();     
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);  
        finalsms.forEach( (sms) -> {
@@ -142,11 +137,8 @@ public class MessageServiceImpl implements IMessageService{
        
       NotificationMessage messageOwner = sendSmsOwner(user.getId(), listNoti.size(), user.getPhone());
       listNoti.add(messageOwner);
-      sendMessage.setCodiEmpr(user.getId());
-      sendMessage.setMensaEmpr(finalMessage);            
-      sendMessage.setMessages(listNoti);
       messageRepo.saveAll(listNoti);
-      response.put("Mensajes", "Mensajes Enviados: "+listNoti.size()+ ".\n Mensajes fallidos :  "+vacios.size() +"\n"+vacios);         
+      response.put("Mensajes", "Mensajes Enviados: "+listNoti.size()+ " \n No se enviaron a : "+vacios);         
       return response;
     }
     
