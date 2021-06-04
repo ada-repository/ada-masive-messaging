@@ -10,7 +10,7 @@ import java.util.Map;
 public interface IMessageService {
     List<NotificationMessage> getAllMessages();
     NotificationMessage getMessage(int id);
-    Map<String, Object> sendMessage(SendMessageRequest message);
+    Map<String, Object> sendMessage(int codEmpresa, String finalMessage,List<NotificationMessage> messages);
     void deleteMessage(int id);
     List<NotificationMessage> getMessagesByIdUser(int idUser);
     List<NotificationMessage> findByReceiverNumberAndUserId(int idUser, String receiverNumber);
