@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class SendMessageRequest {
-    private Integer codiEmpr;
+    private String codiEmpr;
     private String mensaEmpr;
     private List<ClientesNotification> clientes; 
 }

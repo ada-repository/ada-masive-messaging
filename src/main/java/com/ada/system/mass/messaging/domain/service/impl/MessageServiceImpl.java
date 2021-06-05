@@ -78,9 +78,9 @@ public class MessageServiceImpl implements IMessageService{
     }
     
    @Override
-    public Map<String, Object> sendMessage(int codEmpresa, String finalMessage,List<NotificationMessage> messages) {      
+    public Map<String, Object> sendMessage(String codEmpresa, String finalMessage,List<NotificationMessage> messages) {      
         Map<String, Object> response = new HashMap<>();      
-        User user = userService.getUser(codEmpresa);
+        User user = userService.getUserByOriginCod(codEmpresa);
          List<String>  vacios =null ;
         if(user == null){
             response.put("Mensaje", "Usuario no existe en la Base de datos");
@@ -153,11 +153,12 @@ public class MessageServiceImpl implements IMessageService{
              NotificationMessage notification = new NotificationMessage(); 
              notification.setSid(message.getSid());
              notification.setCreatedAt(LocalDate.now());
-             notification.setSubject(null);
+             notification.setSubject("Reporte");
              notification.setMessage(text);
              notification.setReceiverNumber(phone);
              notification.setUserId(userId);
-             notification.setCodCli(null);
+             notification.setCodCli("Owner");
+             notification.setStatus(message.getStatus().toString());
              return notification;    
     }
     

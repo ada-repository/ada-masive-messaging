@@ -63,9 +63,14 @@ public class UserServiceImpl implements IUserService{
         actually.setSendBalance(newUser.isSendBalance());
         return userRepo.save(actually);
     }
-    
+     
    private void disableSubscription(Subscription sub){
        subService.deleteSubscription(sub.getId());
    }
+
+    @Override
+    public User getUserByOriginCod(String OriginCod) {
+      return   userRepo.findByOriginCod(OriginCod).orElse(null);
+    }
 
 }

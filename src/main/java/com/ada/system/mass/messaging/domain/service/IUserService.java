@@ -10,4 +10,5 @@ public interface IUserService {
     boolean deleteUser(int id);
     User saveUser(User user);
     User updateUser(User actually, User newUser);
+    User getUserByOriginCod(String OriginCod);
 }
