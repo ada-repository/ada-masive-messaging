@@ -19,4 +19,5 @@ public class ClientesNotification {
      private String telfClie;
      private Double saldActu;
      private String subject;
+     private String mailClie;
 }

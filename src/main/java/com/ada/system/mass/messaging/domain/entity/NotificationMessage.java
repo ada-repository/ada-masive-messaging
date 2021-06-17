@@ -27,6 +27,8 @@ public class NotificationMessage {
     private LocalDate createdAt;
     private String subject;
     private String sid;
+    private String mailClie;
+    private Double saldActu;
     @Column(name = "user_id")
     private Integer userId;
     private String status;
