@@ -76,9 +76,9 @@ public class MessageController {
          Map<String, Object> response = new HashMap<>();        
          System.out.println("Mensaje:"+request.getReporte().get(0).getMensaEmpr());
          System.out.println("Id:"+request.getReporte().get(0).getCodiEmpr());
-         //List<NotificationMessage> messages =  util.mappingSendMessageToNotificationMessage(request.getClientes());
+         List<NotificationMessage> messages =  util.mappingSendMessageToNotificationMessage(request.getReporte().get(0).getClientes());
          try {
-          //  response = messageService.sendMessage(request.getCodiEmpr(),request.getMensaEmpr(),messages);
+           response = messageService.sendMessage(request.getReporte().get(0).getCodiEmpr(),request.getReporte().get(0).getMensaEmpr(),messages);
         } catch (DataAccessException e) {
             response.put("Mensaje", "Error al realizar la consulta en la Base de Datos");
             response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
