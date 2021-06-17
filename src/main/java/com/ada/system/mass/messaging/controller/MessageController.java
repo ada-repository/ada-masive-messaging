@@ -5,6 +5,7 @@ import java.util.List;
 import com.ada.system.mass.messaging.domain.service.IMessageService;
 import com.ada.system.mass.messaging.domain.entity.NotificationMessage;
 import com.ada.system.mass.messaging.domain.entity.Reporte;
+import com.ada.system.mass.messaging.domain.entity.SendMessageRequest;
 import com.ada.system.mass.messaging.utils.Util;
 
 import java.util.HashMap;
@@ -72,13 +73,13 @@ public class MessageController {
     }
     
     @PostMapping("/save")
-    public ResponseEntity<?> sendMessage(@RequestBody Reporte message){       
+    public ResponseEntity<?> sendMessage(@RequestBody SendMessageRequest request){       
          Map<String, Object> response = new HashMap<>(); 
-         System.out.println("Mensaje:"+message.getMensaEmpr());
-         System.out.println("Id:"+message.getCodiEmpr());
-         List<NotificationMessage> messages =  util.mappingSendMessageToNotificationMessage(message.getClientes());
+         System.out.println("Mensaje:"+request.getReporte().get(0).getMensaEmpr());
+         System.out.println("Id:"+request.getReporte().get(0).getCodiEmpr());
+         List<NotificationMessage> messages =  util.mappingSendMessageToNotificationMessage(request.getReporte().get(0).getClientes());
          try {
-            response = messageService.sendMessage(message.getCodiEmpr(),message.getMensaEmpr(),messages);
+            response = messageService.sendMessage(request.getReporte().get(0).getCodiEmpr(),request.getReporte().get(0).getMensaEmpr(),messages);
         } catch (DataAccessException e) {
             response.put("Mensaje", "Error al realizar la consulta en la Base de Datos");
             response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
