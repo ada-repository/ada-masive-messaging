@@ -112,12 +112,13 @@ public class MessageServiceImpl implements IMessageService{
          
         List<NotificationMessage> listNoti = new LinkedList<>();     
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);  
-       finalsms.forEach( (sms) -> {
-           
-             String[] numbers = sms.getReceiverNumber().split(",");   
+        finalsms.forEach( (sms) -> {
+              
+             String[] numbers = sms.getReceiverNumber().replace("-","").replace(" ", "").split(",");
+             
                 for(String number : numbers ){
                     Message message = Message.creator(                    
-                    new com.twilio.type.PhoneNumber(number), //to
+                    new com.twilio.type.PhoneNumber("+58"+number), //to
                     new com.twilio.type.PhoneNumber("+12057076733"),      //from          
                     finalMessage)
                      .create();
