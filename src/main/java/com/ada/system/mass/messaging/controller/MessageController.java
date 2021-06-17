@@ -73,13 +73,13 @@ public class MessageController {
     }
     
     @PostMapping("/save")
-        public ResponseEntity<?> sendMessage(@RequestBody List<Reporte> request){       
+        public ResponseEntity<?> sendMessage(@RequestBody Reporte request){       
          Map<String, Object> response = new HashMap<>();        
-         System.out.println("Mensaje:"+request.get(0).getMensaEmpr());
-         System.out.println("Id:"+request.get(0).getCodiEmpr());
-         List<NotificationMessage> messages =  util.mappingSendMessageToNotificationMessage(request.get(0).getClientes());
+         System.out.println("Mensaje:"+request.getMensaEmpr());
+         System.out.println("Id:"+request.getCodiEmpr());
+         List<NotificationMessage> messages =  util.mappingSendMessageToNotificationMessage(request.getClientes());
          try {
-            response = messageService.sendMessage(request.get(0).getCodiEmpr(),request.get(0).getMensaEmpr(),messages);
+            response = messageService.sendMessage(request.getCodiEmpr(),request.getMensaEmpr(),messages);
         } catch (DataAccessException e) {
             response.put("Mensaje", "Error al realizar la consulta en la Base de Datos");
             response.put("ERROR", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
