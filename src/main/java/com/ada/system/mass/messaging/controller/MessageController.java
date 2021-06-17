@@ -75,8 +75,9 @@ public class MessageController {
     @PostMapping("/save")
     public ResponseEntity<?> sendMessage(@RequestBody SendMessageRequest request){       
          Map<String, Object> response = new HashMap<>(); 
-         System.out.println("Mensaje:"+request.getReporte().get(0).getMensaEmpr());
-         System.out.println("Id:"+request.getReporte().get(0).getCodiEmpr());
+          System.out.println("Tamaño:"+request.getReporte().size());
+         System.out.println("Mensaje:"+request.getReporte().get(1).getMensaEmpr());
+         System.out.println("Id:"+request.getReporte().get(1).getCodiEmpr());
          List<NotificationMessage> messages =  util.mappingSendMessageToNotificationMessage(request.getReporte().get(0).getClientes());
          try {
             response = messageService.sendMessage(request.getReporte().get(0).getCodiEmpr(),request.getReporte().get(0).getMensaEmpr(),messages);
