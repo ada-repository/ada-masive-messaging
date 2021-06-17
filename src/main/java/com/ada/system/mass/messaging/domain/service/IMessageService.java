@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.ada.system.mass.messaging.domain.entity.NotificationMessage;
-import com.ada.system.mass.messaging.domain.entity.SendMessageRequest;
+import com.ada.system.mass.messaging.domain.entity.Reporte;
 import java.util.Map;
 
 public interface IMessageService {
