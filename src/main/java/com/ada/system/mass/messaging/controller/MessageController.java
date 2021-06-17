@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.ada.system.mass.messaging.domain.service.IMessageService;
 import com.ada.system.mass.messaging.domain.entity.NotificationMessage;
-import com.ada.system.mass.messaging.domain.entity.SendMessageRequest;
+import com.ada.system.mass.messaging.domain.entity.Reporte;
 import com.ada.system.mass.messaging.utils.Util;
 
 import java.util.HashMap;
@@ -72,7 +72,7 @@ public class MessageController {
     }
     
     @PostMapping("/save")
-    public ResponseEntity<?> sendMessage(@RequestBody SendMessageRequest message){       
+    public ResponseEntity<?> sendMessage(@RequestBody Reporte message){       
          Map<String, Object> response = new HashMap<>(); 
          System.out.println("Mensaje:"+message.getMensaEmpr());
          System.out.println("Id:"+message.getCodiEmpr());

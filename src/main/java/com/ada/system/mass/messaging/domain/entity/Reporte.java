@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class SendMessageRequest {
+public class Reporte {
     private String codiEmpr;
     private String mensaEmpr;
     private List<ClientesNotification> clientes; 

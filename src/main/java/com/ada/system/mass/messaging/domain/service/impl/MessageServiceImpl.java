@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.ada.system.mass.messaging.domain.repository.MessageJpaRepository;
 import com.ada.system.mass.messaging.domain.entity.NotificationMessage;
-import com.ada.system.mass.messaging.domain.entity.SendMessageRequest;
+import com.ada.system.mass.messaging.domain.entity.Reporte;
 import com.ada.system.mass.messaging.domain.entity.User;
 import com.ada.system.mass.messaging.domain.service.IMessageService;
 import com.ada.system.mass.messaging.domain.service.IUserService;
