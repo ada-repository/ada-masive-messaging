@@ -14,5 +14,5 @@ import lombok.Data;
  */
 @Data
 public class SendMessageRequest {
-    private List<Reporte> Reporte; 
+    private Reporte Reporte; 
 }
