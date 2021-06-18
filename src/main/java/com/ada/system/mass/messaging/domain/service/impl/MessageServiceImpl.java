@@ -139,7 +139,11 @@ public class MessageServiceImpl implements IMessageService{
       NotificationMessage messageOwner = sendSmsOwner(user.getId(), listNoti.size(), user.getPhone());
       listNoti.add(messageOwner);
       messageRepo.saveAll(listNoti);
-      response.put("Mensajes", "Mensajes Enviados: "+listNoti.size()+ " \n No se enviaron a : "+vacios);         
+      if (vacios == null){
+          response.put("Mensajes", "Mensajes Enviados: "+listNoti.size());
+      }else{
+          response.put("Mensajes", "Mensajes Enviados: "+listNoti.size()+ " \n No se enviaron a : "+vacios);         
+          }             
       return response;
     }
     
