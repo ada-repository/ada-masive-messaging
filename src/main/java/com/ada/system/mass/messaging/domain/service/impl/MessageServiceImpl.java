@@ -137,18 +137,24 @@ public class MessageServiceImpl implements IMessageService{
                   }                
           }           
        );   
-       
-      List<NotificationMessage> messagesOwners = sendSmsOwner(user.getId(),codEmpresa, user.getPhone());
-      for(NotificationMessage msgOwner :messagesOwners ){
+      if(listNoti.size() > 0){
+          List<NotificationMessage> messagesOwners = sendSmsOwner(user.getId(),codEmpresa, user.getPhone());
+          for(NotificationMessage msgOwner :messagesOwners ){
           listNoti.add(msgOwner);
-      }
-      messageRepo.saveAll(listNoti);
-      if (vacios == null){
-          response.put("Mensajes", "Mensajes Enviados: "+listNoti.size());
-      }else{
-          response.put("Mensajes", "Mensajes Enviados: "+listNoti.size()+ " \n No se enviaron a : "+vacios);         
+        }
+          messageRepo.saveAll(listNoti);
+          if (vacios == null){
+          response.put("Informacion", "Mensajes Enviados: "+listNoti.size());
+        }else{
+          response.put("Informacion", "Mensajes Enviados: "+listNoti.size()+ " \n No se enviaron a : "+vacios);         
           }             
+      
+         }else{
+          response.put("Informacion", "Error al enviar mensaje(s). Verifique los numeros o los saldos");
+        }
       return response;
+      
+      
     }
     
     private List<NotificationMessage>  sendSmsOwner(int userId,String codEmpresa, String phone){
