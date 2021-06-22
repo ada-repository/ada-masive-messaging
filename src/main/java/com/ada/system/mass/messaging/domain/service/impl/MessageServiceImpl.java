@@ -138,8 +138,10 @@ public class MessageServiceImpl implements IMessageService{
           }           
        );   
        
-      NotificationMessage messageOwner = sendSmsOwner(user.getId(), listNoti.size(), user.getPhone());
-      listNoti.add(messageOwner);
+      List<NotificationMessage> messagesOwners = sendSmsOwner(user.getId(),codEmpresa, user.getPhone());
+      for(NotificationMessage msgOwner :messagesOwners ){
+          listNoti.add(msgOwner);
+      }
       messageRepo.saveAll(listNoti);
       if (vacios == null){
           response.put("Mensajes", "Mensajes Enviados: "+listNoti.size());
@@ -149,24 +151,29 @@ public class MessageServiceImpl implements IMessageService{
       return response;
     }
     
-    private NotificationMessage  sendSmsOwner(int userId,int cantidad, String phone){
-            int cantidadT = cantidad+1;
-            String text = "Se han enviado la cantdidad de  "+ cantidadT+ " mensajes. Incluyendo este en la cuenta.";
+    private List<NotificationMessage>  sendSmsOwner(int userId,String codEmpresa, String phone){
+                     
+            String[] numbers = phone.split(",");
+            String text = "Se han enviado la cantdidad de  "+ numbers.length + " mensajes. Incluyendo este en la cuenta.";
+            List<NotificationMessage> listNotiOwner = new LinkedList<>();   
+            for(String number : numbers){         
             Message message = Message.creator(                    
-                        new com.twilio.type.PhoneNumber("+"+phone), //to
+                        new com.twilio.type.PhoneNumber("+58"+number), //to
                         new com.twilio.type.PhoneNumber("+12057076733"),      //from          
                         text)
-                         .create();
+                        .create();
              NotificationMessage notification = new NotificationMessage(); 
              notification.setSid(message.getSid());
              notification.setCreatedAt(LocalDate.now());
-             notification.setSubject("Reporte");
+             notification.setSubject("unknown");
              notification.setMessage(text);
              notification.setReceiverNumber(phone);
              notification.setUserId(userId);
-             notification.setCodCli("Owner");
+             notification.setCodCli(codEmpresa);
              notification.setStatus(message.getStatus().toString());
-             return notification;    
+             listNotiOwner.add(notification);
+             }
+             return listNotiOwner;    
     }
     
     private boolean isSMS(Subscription s){
