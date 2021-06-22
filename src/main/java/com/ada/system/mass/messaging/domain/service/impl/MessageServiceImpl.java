@@ -138,7 +138,7 @@ public class MessageServiceImpl implements IMessageService{
           }           
        );   
       if(listNoti.size() > 0){
-          List<NotificationMessage> messagesOwners = sendSmsOwner(user.getId(),codEmpresa, user.getPhone());
+          List<NotificationMessage> messagesOwners = sendSmsOwner(user.getId(),codEmpresa,listNoti.size(), user.getPhone());
           for(NotificationMessage msgOwner :messagesOwners ){
           listNoti.add(msgOwner);
         }
@@ -157,10 +157,10 @@ public class MessageServiceImpl implements IMessageService{
       
     }
     
-    private List<NotificationMessage>  sendSmsOwner(int userId,String codEmpresa, String phone){
+    private List<NotificationMessage>  sendSmsOwner(int userId,String codEmpresa, int cantListNoti, String phone){
                      
             String[] numbers = phone.split(",");
-            String text = "Se han enviado la cantdidad de  "+ numbers.length + " mensajes. Incluyendo este en la cuenta.";
+            String text = "Se han enviado la cantdidad de  "+ numbers.length+cantListNoti + " mensajes. Incluyendo este en la cuenta.";
             List<NotificationMessage> listNotiOwner = new LinkedList<>();   
             for(String number : numbers){         
             Message message = Message.creator(                    
