@@ -97,7 +97,8 @@ public class MessageServiceImpl implements IMessageService{
     }
 
        
-        
+       // Necesitamos un listado de los mensajes que vengan con el numero en blanco o con el saldo en negativo ya que a 
+       // estos no se le enviara el sms y asi no habra error en twilio (lo del saldo es a peticion del cliente)
        List<NotificationMessage> empty =  messages.stream()
                                                                                           .filter( sms -> isEmptyNumber(sms))
                                                                                           .collect(Collectors.toList());
@@ -106,6 +107,7 @@ public class MessageServiceImpl implements IMessageService{
           vacios = numbersVac(empty);
        }
        
+       //Filtramos la lista para obtener a los mensajes con numero de telefono y ademas con saldo positivo
        List<NotificationMessage> finalsms = messages .stream()
                                                                                               .filter(sms -> !isEmptyNumber(sms))
                                                                                               .collect(Collectors.toList());
@@ -168,11 +170,11 @@ public class MessageServiceImpl implements IMessageService{
     }
     
     private boolean isSMS(Subscription s){
-        return "SMS".equals(s.getPlan().getCategory().getName()) && s.isStatus() == true && !( s.getEndDate().isBefore(LocalDate.now())) ; 
+        return "SMS".equals(s.getPlan().getCategory().getName())  && s.isStatus() ; 
     }
     
     private boolean isEmptyNumber(NotificationMessage sms){
-        return "".equals(sms.getReceiverNumber());
+        return "".equals(sms.getReceiverNumber()) || sms.getSaldActu() <= 0;
     }
     
     private List<String> numbersVac(List<NotificationMessage> empty){
