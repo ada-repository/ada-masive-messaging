@@ -160,7 +160,7 @@ public class MessageServiceImpl implements IMessageService{
     private List<NotificationMessage>  sendSmsOwner(int userId,String codEmpresa, int cantListNoti, String phone){
                      
             String[] numbers = phone.split(",");
-            String text = "Se han enviado la cantdidad de  "+ numbers.length+cantListNoti + " mensajes. Incluyendo este en la cuenta.";
+            String text = "Se han enviado la cantdidad de  "+ (numbers.length+cantListNoti) + " mensajes. Incluyendo este en la cuenta.";
             List<NotificationMessage> listNotiOwner = new LinkedList<>();   
             for(String number : numbers){         
             Message message = Message.creator(                    
