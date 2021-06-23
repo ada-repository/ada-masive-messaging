@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,24 +101,27 @@ public class MessageServiceImpl implements IMessageService{
        // Necesitamos un listado de los mensajes que vengan con el numero en blanco o con el saldo en negativo ya que a 
        // estos no se le enviara el sms y asi no habra error en twilio (lo del saldo es a peticion del cliente)
        List<NotificationMessage> empty =  messages.stream()
-                                                                                          .filter( sms -> isEmptyNumber(sms))
-                                                                                          .collect(Collectors.toList());
+                                                          .filter( sms -> isEmptyNumber(sms))
+                                                          .collect(Collectors.toList());
         
        if(empty.size() >0){
           vacios = numbersVac(empty);
        }
        
        //Filtramos la lista para obtener a los mensajes con numero de telefono y ademas con saldo positivo
-       List<NotificationMessage> finalsms = messages .stream()
-                                                                                              .filter(sms -> !isEmptyNumber(sms))
-                                                                                              .collect(Collectors.toList());
+       List<NotificationMessage> finalsms = messages.stream()
+                                                            .filter(sms -> !isEmptyNumber(sms))
+                                                            .collect(Collectors.toList());
          
         List<NotificationMessage> listNoti = new LinkedList<>();     
-        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);  
+        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+        
+     
         finalsms.forEach( (sms) -> {
-              
-             String[] numbers = sms.getReceiverNumber().replace("-","").replace(" ", "").split(",");
              
+             List<String> numbers = formattingPhone(sms.getReceiverNumber());
+            // String[] numbers = sms.getReceiverNumber().replace("-","").replace(" ", "").split(",");
+            
                 for(String number : numbers ){
                     Message message = Message.creator(                    
                     new com.twilio.type.PhoneNumber("+58"+number), //to
@@ -187,7 +191,7 @@ public class MessageServiceImpl implements IMessageService{
     }
     
     private boolean isEmptyNumber(NotificationMessage sms){
-        return "".equals(sms.getReceiverNumber()) || sms.getSaldActu() <= 0;
+        return "".equals(sms.getReceiverNumber()) || sms.getSaldActu() <= 0  ;
     }
     
     private List<String> numbersVac(List<NotificationMessage> empty){
@@ -196,5 +200,26 @@ public class MessageServiceImpl implements IMessageService{
                vac.add(list.getCodCli());
            });
            return vac;
-      }    
+      }
+
+      private boolean validatePhone(String phone){
+          Pattern pattern = Pattern.compile("[0-9]{8}");
+          return pattern.matcher(phone).matches();
+      }
+      
+      // String[] numbers = sms.getReceiverNumber().replace("-","").replace(" ", "").split(",");
+      private List<String> formattingPhone(String phone){ // puede venir algo asi 426-4236465,4246424715, 0426-8424872
+          List<String> phones = new LinkedList<>();
+          String[] numbers = phone.replace("-","").replace(" ", "").split(",");
+          for(String tlf : numbers){
+              if(tlf.charAt(0) == 0){
+                  tlf.replaceFirst("0","");                   
+              }
+              if(validatePhone(tlf)){
+                  phones.add(tlf);
+              }
+                  
+          }
+          return phones;
+      }
     }
