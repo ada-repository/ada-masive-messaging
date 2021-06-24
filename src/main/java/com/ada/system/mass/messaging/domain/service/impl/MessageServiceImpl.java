@@ -119,10 +119,13 @@ public class MessageServiceImpl implements IMessageService{
      
         finalsms.forEach( (sms) -> {
              
-             List<String> numbers = formattingPhone(sms.getReceiverNumber());
-            // String[] numbers = sms.getReceiverNumber().replace("-","").replace(" ", "").split(",");
-            
-                for(String number : numbers ){
+            //Necesitamos 2 lista. 1 Con los numeros con formato bueno "Correct" y otro con los que no cumplen con el formato "Incorrect"
+             Map<String,List<String>> numbers = formattingPhone(sms.getReceiverNumber());
+             if(numbers.get("Incorrect").size() > 0){    
+            response.put("Incorrect", "Por favor corrija los siguientes numeros: "+numbers.get("Incorrect"));
+            }
+            if(numbers.get("Correct").size() > 0){       
+                for(String number : numbers.get("Correct")){
                     Message message = Message.creator(                    
                     new com.twilio.type.PhoneNumber("+58"+number), //to
                     new com.twilio.type.PhoneNumber("+12057076733"),      //from          
@@ -138,7 +141,8 @@ public class MessageServiceImpl implements IMessageService{
                     notification.setUserId(user.getId());  
                     notification.setSid(message.getSid());
                     listNoti.add(notification);  
-                  }                
+                  }  
+                }
           }           
        );   
       if(listNoti.size() > 0){
@@ -147,7 +151,7 @@ public class MessageServiceImpl implements IMessageService{
           listNoti.add(msgOwner);
         }
           messageRepo.saveAll(listNoti);
-          if (vacios == null){
+          if (vacios == null){           
           response.put("Informacion", "Mensajes Enviados: "+listNoti.size());
         }else{
           response.put("Informacion", "Mensajes Enviados: "+listNoti.size()+ " \n No se enviaron a : "+vacios);         
@@ -203,23 +207,28 @@ public class MessageServiceImpl implements IMessageService{
       }
 
       private boolean validatePhone(String phone){
-          Pattern pattern = Pattern.compile("[0-9]{8}");
+          Pattern pattern = Pattern.compile("[0-9]{10}");
           return pattern.matcher(phone).matches();
       }
       
-      // String[] numbers = sms.getReceiverNumber().replace("-","").replace(" ", "").split(",");
-      private List<String> formattingPhone(String phone){ // puede venir algo asi 426-4236465,4246424715, 0426-8424872
-          List<String> phones = new LinkedList<>();
+      
+      private Map<String, List<String>> formattingPhone(String phone){ // puede venir algo asi 426-4236465,4246424715, 0426-8424872   
+          Map<String, List<String>> response = new HashMap<>();   
+          List<String> phones = new ArrayList<>();
+           List<String> badPhone = new ArrayList<>();
           String[] numbers = phone.replace("-","").replace(" ", "").split(",");
           for(String tlf : numbers){
-              if(tlf.charAt(0) == 0){
-                  tlf.replaceFirst("0","");                   
-              }
+              if(tlf.charAt(0) ==  '0'){
+                tlf=  tlf.replaceFirst("0","");                   
+              }   
               if(validatePhone(tlf)){
                   phones.add(tlf);
-              }
-                  
+              } else{
+                  badPhone.add(tlf);
+              }               
           }
-          return phones;
+          response.put("Correct", phones);
+          response.put("Incorrect", badPhone);
+          return response;
       }
     }
