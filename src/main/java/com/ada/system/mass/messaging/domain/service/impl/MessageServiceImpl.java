@@ -34,6 +34,8 @@ public class MessageServiceImpl implements IMessageService{
     public String ACCOUNT_SID;
     @Value("${twilio.account.token}")
     public String AUTH_TOKEN;
+    @Value("${twilio.account.numberPhone}")
+    public String PHONE_NUMBER;
 
     @Autowired
     private MessageJpaRepository messageRepo;
@@ -128,7 +130,7 @@ public class MessageServiceImpl implements IMessageService{
                 for(String number : numbers.get("Correct")){
                     Message message = Message.creator(                    
                     new com.twilio.type.PhoneNumber("+58"+number), //to
-                    new com.twilio.type.PhoneNumber("+12057076733"),      //from          
+                    new com.twilio.type.PhoneNumber(PHONE_NUMBER),      //from          
                     finalMessage)
                      .create();
                     NotificationMessage notification = new NotificationMessage();           
@@ -140,7 +142,7 @@ public class MessageServiceImpl implements IMessageService{
                     notification.setSubject(sms.getSubject());
                     notification.setUserId(user.getId());  
                     notification.setSid(message.getSid());
-                    listNoti.add(notification);  
+                    listNoti.add(notification);
                   }  
                 }
           }           

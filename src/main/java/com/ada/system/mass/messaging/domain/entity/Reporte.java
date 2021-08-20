@@ -16,5 +16,6 @@ import lombok.Data;
 public class Reporte {
     private String codiEmpr;
     private String mensaEmpr;
+    private String telefonoReporte;
     private List<ClientesNotification> clientes; 
 }

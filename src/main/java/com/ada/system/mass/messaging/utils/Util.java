@@ -24,8 +24,7 @@ public class Util {
                  NotificationMessage notification = new NotificationMessage();
                     notification.setCodCli(client.getCodiClie());
                     notification.setReceiverNumber(client.getTelfClie());
-                    notification.setMailClie(client.getMailClie());
-                    System.out.println("Saldo: "+client.getSaldActu());
+                    notification.setMailClie(client.getMailClie());                   
                     notification.setSaldActu(client.getSaldActu());
                     converted.add(notification);
              }
