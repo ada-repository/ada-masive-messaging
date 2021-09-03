@@ -21,12 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
+@RequestMapping("/home")
 public class HomeController {
     
     @Autowired
     private IHomeService home;
     
-    @RequestMapping("/")
+    @GetMapping("/info")
     @ResponseStatus(HttpStatus.OK)
     public List<String> home(){
          return  home.infoCompany();     
