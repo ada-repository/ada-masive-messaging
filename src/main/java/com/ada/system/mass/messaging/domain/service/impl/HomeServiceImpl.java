@@ -8,11 +8,13 @@ package com.ada.system.mass.messaging.domain.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import com.ada.system.mass.messaging.domain.service.IHomeService;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author Xiangn Rodriguez<xiangnrodriguez@gmail.com>
  */
+@Service
 public class HomeServiceImpl implements IHomeService {
 
     @Override
