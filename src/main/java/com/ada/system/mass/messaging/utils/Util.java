@@ -92,7 +92,7 @@ public class Util {
             if(tlf.charAt(0) ==  '0'){
                 tlf=  tlf.replaceFirst("0","");
             }
-            if(tlf.contains("251")){
+            if(tlf.charAt(0) != '4'){
                 badPhone.add(tlf);
                 System.out.println("añadido "+tlf);
             }
