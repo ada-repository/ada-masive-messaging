@@ -10,21 +10,26 @@ import com.ada.system.mass.messaging.utils.Util;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/messages")
 public class MessageController {
-    
+
+    @Value("${twilio.account.sid}")
+    public String ACCOUNT_SID;
+    @Value("${twilio.account.token}")
+    public String AUTH_TOKEN;
+    @Value("${twilio.account.numberPhone}")
+    public String PHONE_NUMBER;
+
     @Autowired
     private IMessageService messageService;
     
@@ -76,7 +81,7 @@ public class MessageController {
          Map<String, Object> response = new HashMap<>();        
          System.out.println("Mensaje:"+request.getReporte().get(0).getMensaEmpr());
          System.out.println("Id:"+request.getReporte().get(0).getCodiEmpr());
-         List<NotificationMessage> messages =  util.mappingSendMessageToNotificationMessage(request.getReporte().get(0).getClientes());
+         List<NotificationMessage> messages =  Util.mappingSendMessageToNotificationMessage(request.getReporte().get(0).getClientes());
          try {
            response = messageService.sendMessage(request.getReporte().get(0).getCodiEmpr(),request.getReporte().get(0).getMensaEmpr(),messages);
         } catch (DataAccessException e) {
@@ -89,6 +94,13 @@ public class MessageController {
        }  
         return new ResponseEntity<>(response,HttpStatus.CREATED);
       
+    }
+
+    @GetMapping("/buscar/{sid}")
+    public ResponseEntity<Message> buscar(@PathVariable String sid){
+        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+        Message message2 = Message.fetcher(sid).fetch();
+        return new ResponseEntity<>(message2, HttpStatus.OK);
     }
     
 }
