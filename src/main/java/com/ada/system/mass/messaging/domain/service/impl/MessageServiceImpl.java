@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-
 @Service
 public class MessageServiceImpl implements IMessageService{
     
@@ -119,7 +118,7 @@ public class MessageServiceImpl implements IMessageService{
          
         List<NotificationMessage> listNoti = new LinkedList<>();     
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
-
+        int groupId = messageRepo.countGruopId();
         finalsms.forEach( (sms) -> {
             //Necesitamos 2 lista. 1 Con los numeros con formato bueno "Correct" y otro con los que no cumplen con el formato "Incorrect"
              Map<String,List<String>> numbers = Util.formattingPhone(sms.getReceiverNumber());
@@ -143,6 +142,7 @@ public class MessageServiceImpl implements IMessageService{
                     notification.setSubject(sms.getSubject());
                     notification.setUserId(user.getId());  
                     notification.setSid(message.getSid());
+                    //notification.setGroupId(groupId+1);
                     listNoti.add(notification);
                   }  
             }
@@ -155,9 +155,9 @@ public class MessageServiceImpl implements IMessageService{
         }
           messageRepo.saveAll(listNoti);
           if (vacios == null){
-          response.put("Información", "Mensajes Enviados: "+listNoti.size());
+          response.put("Información", "Id de transaccion: "+ (groupId+1) +" \n Mensajes Enviados: "+listNoti.size());
         }else{
-          response.put("Información", "Mensajes Enviados: "+listNoti.size()+ " \n No se enviaron a : "+vacios);
+          response.put("Información","Id de transaccion: "+ (groupId+1) + " \n Mensajes Enviados: "+listNoti.size()+ " \n No se enviaron a : "+vacios);
           }
          }else{
           response.put("Información", "Error al enviar mensaje(s). Verifique los números o los saldos");

@@ -32,6 +32,7 @@ public class NotificationMessage {
     @Column(name = "user_id")
     private Integer userId;
     private String status;
+   // private Integer groupId;
 
     @JsonIgnore
     @ManyToOne

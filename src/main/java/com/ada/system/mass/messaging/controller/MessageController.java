@@ -54,8 +54,6 @@ public class MessageController {
         return new ResponseEntity<>(response, HttpStatus.OK);     
     }
     
-    
-    
     @GetMapping("/{id}")
     public ResponseEntity<?> getMessage(@PathVariable int id){
         Map<String, Object> response = new HashMap<>();
@@ -93,11 +91,11 @@ public class MessageController {
            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
        }  
         return new ResponseEntity<>(response,HttpStatus.CREATED);
-      
     }
 
-    @GetMapping("/buscar/{sid}")
-    public ResponseEntity<Message> buscar(@PathVariable String sid){
+    @GetMapping("/find-status/{grupoSms}")
+    public ResponseEntity<Message> findStatusMessageList(@PathVariable int grupoSms){
+        String sid = "SMa355da24624e40a2ab1696e743c35c75";
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
         Message message2 = Message.fetcher(sid).fetch();
         return new ResponseEntity<>(message2, HttpStatus.OK);

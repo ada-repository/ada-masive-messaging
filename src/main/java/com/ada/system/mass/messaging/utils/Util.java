@@ -40,7 +40,7 @@ public class Util {
         String[] numbers = phone.split(",");
         String text = "Se han enviado la cantidad de  "+ (numbers.length+cantListNoti) + " mensajes. Incluyendo este en la cuenta.";
         List<NotificationMessage> listNotiOwner = new LinkedList<>();
-        /*
+
         for(String number : numbers){
             Message message = Message.creator(
                             new com.twilio.type.PhoneNumber("+58"+number), //to
@@ -50,7 +50,7 @@ public class Util {
             NotificationMessage notification = new NotificationMessage();
             notification.setSid(message.getSid());
             notification.setCreatedAt(LocalDate.now());
-            notification.setSubject("unknown");
+            notification.setSubject("Fibernet");
             notification.setMessage(text);
             notification.setReceiverNumber(phone);
             notification.setUserId(userId);
@@ -58,7 +58,7 @@ public class Util {
             notification.setStatus(message.getStatus().toString());
             listNotiOwner.add(notification);
         }
-         */
+
         return listNotiOwner;
     }
 
